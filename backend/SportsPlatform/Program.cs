@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SportsPlatform.Data;
+using SportsPlatform.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(connectionString);
 });
+
+builder.Services.AddScoped<SportService>();
+builder.Services.AddScoped<CompetitionService>();
 
 var app = builder.Build();
 
