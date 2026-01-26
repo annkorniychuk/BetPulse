@@ -1,15 +1,14 @@
-namespace SportsPlatform.Domain.Entities;
-
-public enum UserRole
-{
-    User = 0,
-    Admin = 1
-}
+﻿namespace SportsPlatform.Domain.Entities;
 
 public class User
 {
     public int Id { get; set; }
-    public string Email { get; set; } = null!;
-    public string PasswordHash { get; set; } = null!;
-    public UserRole Role { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty; // Додано для профілю
+    public string Role { get; set; } = "User"; // "User" або "Admin"
+
+    // Зв'язки
+    public List<Favorite> Favorites { get; set; } = new();
+    public List<Bet> Bets { get; set; } = new();
 }
