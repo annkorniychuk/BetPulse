@@ -13,12 +13,22 @@ public class CompetitionService
         _db = db;
     }
 
-    public async Task<List<Competition>> GetAllAsync()
+    public async Task<List<Competition>> GetAllAsync(string? searchTerm = null)
     {
-        return await _db.Competitions
+        var query = _db.Competitions
             .Include(x => x.Sport)
-            .OrderBy(x => x.Name)
-            .ToListAsync();
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            searchTerm = searchTerm.ToLower();
+            query = query.Where(x =>
+                x.Name.ToLower().Contains(searchTerm) ||
+                x.Sport.Name.ToLower().Contains(searchTerm)
+            );
+        }
+
+        return await query.OrderBy(x => x.Name).ToListAsync();
     }
 
     public async Task<Competition?> GetByIdAsync(int id)

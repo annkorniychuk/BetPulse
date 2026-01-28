@@ -34,6 +34,9 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
             Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value!))
     };
 });
+builder.Services.AddScoped<PromotionService>();
+
+builder.Services.AddScoped<BetService>();
 
 builder.Services.AddOpenApi();
 
