@@ -3,12 +3,16 @@
 public class Bet
 {
     public int Id { get; set; }
+
     public int UserId { get; set; }
-    public User? User { get; set; }
+    public User User { get; set; } = null!;
+
+    public int CompetitionId { get; set; }
+    public Competition Competition { get; set; } = null!; 
+
     public decimal Amount { get; set; }
-    public string EventName { get; set; } = string.Empty;
-    public decimal Coefficient { get; set; }
-    public string Status { get; set; } = "Pending"; // Pending, Won, Lost
-    public DateTime DatePlaced { get; set; } = DateTime.UtcNow;
+    public decimal Odd { get; set; }
+    public decimal PotentialWin { get; set; }
+    public string Status { get; set; } = "Pending";
+    public DateTime BetDate { get; set; } = DateTime.UtcNow;
 }
-//історія ставок

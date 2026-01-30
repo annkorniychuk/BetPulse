@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SportsPlatform.Data;
@@ -11,9 +12,11 @@ using SportsPlatform.Data;
 namespace SportsPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260128164715_AddPromoCode")]
+    partial class AddPromoCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,17 +36,15 @@ namespace SportsPlatform.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
-                    b.Property<DateTime>("BetDate")
+                    b.Property<decimal>("Coefficient")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("DatePlaced")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("CompetitionId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Odd")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("PotentialWin")
-                        .HasColumnType("numeric");
+                    b.Property<string>("EventName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -53,8 +54,6 @@ namespace SportsPlatform.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompetitionId");
 
                     b.HasIndex("UserId");
 
@@ -197,19 +196,11 @@ namespace SportsPlatform.Migrations
 
             modelBuilder.Entity("SportsPlatform.Domain.Entities.Bet", b =>
                 {
-                    b.HasOne("SportsPlatform.Domain.Entities.Competition", "Competition")
-                        .WithMany()
-                        .HasForeignKey("CompetitionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SportsPlatform.Domain.Entities.User", "User")
                         .WithMany("Bets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Competition");
 
                     b.Navigation("User");
                 });

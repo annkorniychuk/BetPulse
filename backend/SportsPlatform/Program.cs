@@ -69,6 +69,9 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
     };
 
 });
+builder.Services.AddScoped<PromotionService>();
+
+builder.Services.AddScoped<BetService>();
 
 
 
