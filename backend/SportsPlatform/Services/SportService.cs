@@ -2,55 +2,28 @@
 using SportsPlatform.Data;
 using SportsPlatform.Domain.Entities;
 
-
 namespace SportsPlatform.Services;
 
 public class SportService
 {
-    private readonly AppDbContext _db;
+    private readonly AppDbContext _context; 
 
-    public SportService(AppDbContext db)
+    public SportService(AppDbContext context)
     {
-        _db = db;
+        _context = context;
     }
 
     public async Task<List<Sport>> GetAllAsync()
     {
-        return await _db.Sports
-            .OrderBy(x => x.Name)
-            .ToListAsync();
-    }
-
-    public async Task<Sport?> GetByIdAsync(int id)
-    {
-        return await _db.Sports.FindAsync(id);
+        return await _context.Sports.ToListAsync();
     }
 
     public async Task<Sport> CreateAsync(string name)
     {
-        var exists = await _db.Sports.AnyAsync(x => x.Name == name);
-        if (exists)
-            throw new InvalidOperationException("Sport already exists");
-
-        var sport = new Sport
-        {
-            Name = name
-        };
-
-        _db.Sports.Add(sport);
-        await _db.SaveChangesAsync();
-
+        var sport = new Sport { Name = name };
+        _context.Sports.Add(sport);
+        await _context.SaveChangesAsync();
         return sport;
-    }
-
-    public async Task DeleteAsync(int id)
-    {
-        var sport = await _db.Sports.FindAsync(id);
-        if (sport == null)
-            throw new KeyNotFoundException("Sport not found");
-
-        _db.Sports.Remove(sport);
-        await _db.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(int id, string newName)
@@ -59,6 +32,15 @@ public class SportService
         if (sport == null) throw new Exception("Спорт не знайдено");
 
         sport.Name = newName;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var sport = await _context.Sports.FindAsync(id);
+        if (sport == null) throw new Exception("Спорт не знайдено");
+
+        _context.Sports.Remove(sport);
         await _context.SaveChangesAsync();
     }
 }

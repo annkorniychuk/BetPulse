@@ -6,17 +6,17 @@ namespace SportsPlatform.Services;
 
 public class CompetitionService
 {
-    private readonly AppDbContext _db;
+    private readonly AppDbContext _context; 
 
-    public CompetitionService(AppDbContext db)
+    public CompetitionService(AppDbContext context)
     {
-        _db = db;
+        _context = context;
     }
 
-    public async Task<List<Competition>> GetAllAsync(string? searchTerm = null)
+    public async Task<List<Competition>> GetAllAsync(string? searchTerm)
     {
-        var query = _db.Competitions
-            .Include(x => x.Sport)
+        var query = _context.Competitions
+            .Include(c => c.Sport)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -24,25 +24,23 @@ public class CompetitionService
             searchTerm = searchTerm.ToLower();
             query = query.Where(x =>
                 x.Name.ToLower().Contains(searchTerm) ||
-                x.Sport.Name.ToLower().Contains(searchTerm)
-            );
+                x.Sport.Name.ToLower().Contains(searchTerm));
         }
 
-        return await query.OrderBy(x => x.Name).ToListAsync();
+        return await query.OrderBy(c => c.Name).ToListAsync();
     }
 
     public async Task<Competition?> GetByIdAsync(int id)
     {
-        return await _db.Competitions
-            .Include(x => x.Sport)
-            .FirstOrDefaultAsync(x => x.Id == id);
+        return await _context.Competitions
+            .Include(c => c.Sport)
+            .FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<Competition> CreateAsync(string name, int sportId)
     {
-        var sport = await _db.Sports.FindAsync(sportId);
-        if (sport == null)
-            throw new KeyNotFoundException("Sport not found");
+        var sportExists = await _context.Sports.AnyAsync(s => s.Id == sportId);
+        if (!sportExists) throw new Exception("Спорт не знайдено");
 
         var competition = new Competition
         {
@@ -50,20 +48,9 @@ public class CompetitionService
             SportId = sportId
         };
 
-        _db.Competitions.Add(competition);
-        await _db.SaveChangesAsync();
-
+        _context.Competitions.Add(competition);
+        await _context.SaveChangesAsync();
         return competition;
-    }
-
-    public async Task DeleteAsync(int id)
-    {
-        var competition = await _db.Competitions.FindAsync(id);
-        if (competition == null)
-            throw new KeyNotFoundException("Competition not found");
-
-        _db.Competitions.Remove(competition);
-        await _db.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(int id, string name, int sportId)
@@ -77,6 +64,15 @@ public class CompetitionService
         competition.Name = name;
         competition.SportId = sportId;
 
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var competition = await _context.Competitions.FindAsync(id);
+        if (competition == null) throw new Exception("Змагання не знайдено");
+
+        _context.Competitions.Remove(competition);
         await _context.SaveChangesAsync();
     }
 }

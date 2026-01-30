@@ -5,62 +5,29 @@ using SportsPlatform.Services;
 
 namespace SportsPlatform.Controllers;
 
+[Route("api/[controller]")]
 [ApiController]
-[Route("api/sports")]
 public class SportsController : ControllerBase
 {
-    private readonly SportService _sportService;
+    private readonly SportService _service; 
 
-    public SportsController(SportService sportService)
+    public SportsController(SportService service)
     {
-        _sportService = sportService;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<ActionResult<List<Sport>>> GetAll()
     {
-        var sports = await _sportService.GetAllAsync();
-        return Ok(sports);
-    }
-
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<Sport>> GetById(int id)
-    {
-        var sport = await _sportService.GetByIdAsync(id);
-        if (sport == null)
-            return NotFound();
-
-        return Ok(sport);
+        return await _service.GetAllAsync();
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult<Sport>> Create(CreateSportRequest request)
+    public async Task<ActionResult<Sport>> Create([FromBody] CreateSportRequest request)
     {
-        try
-        {
-            var sport = await _sportService.CreateAsync(request.Name);
-            return CreatedAtAction(nameof(GetById), new { id = sport.Id }, sport);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    [HttpDelete("{id:int}")]
-    [Authorize]
-    public async Task<IActionResult> Delete(int id)
-    {
-        try
-        {
-            await _sportService.DeleteAsync(id);
-            return NoContent();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
+        var sport = await _service.CreateAsync(request.Name);
+        return Ok(sport);
     }
 
     [HttpPut("{id}")]
@@ -77,14 +44,29 @@ public class SportsController : ControllerBase
             return NotFound(ex.Message);
         }
     }
+
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            await _service.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+}
+
+public class CreateSportRequest
+{
+    public string Name { get; set; } = string.Empty;
 }
 
 public class UpdateSportRequest
 {
     public string Name { get; set; } = string.Empty;
-}
-
-public class CreateSportRequest
-{
-    public string Name { get; set; } = null!;
 }
