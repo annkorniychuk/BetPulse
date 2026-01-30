@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SportsPlatform.Data;
 using SportsPlatform.Domain.Entities;
 
@@ -54,5 +54,19 @@ public class CompetitionService
 
         _db.Competitions.Remove(competition);
         await _db.SaveChangesAsync();
+    }
+
+    public async Task UpdateAsync(int id, string name, int sportId)
+    {
+        var competition = await _context.Competitions.FindAsync(id);
+        if (competition == null) throw new Exception("Змагання не знайдено");
+
+        var sportExists = await _context.Sports.AnyAsync(s => s.Id == sportId);
+        if (!sportExists) throw new Exception("Такого спорту не існує");
+
+        competition.Name = name;
+        competition.SportId = sportId;
+
+        await _context.SaveChangesAsync();
     }
 }

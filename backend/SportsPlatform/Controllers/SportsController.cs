@@ -1,6 +1,7 @@
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SportsPlatform.Services;
 using SportsPlatform.Domain.Entities;
+using SportsPlatform.Services;
 
 namespace SportsPlatform.Controllers;
 
@@ -33,18 +34,54 @@ public class SportsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<Sport>> Create(CreateSportRequest request)
     {
-        var sport = await _sportService.CreateAsync(request.Name);
-        return CreatedAtAction(nameof(GetById), new { id = sport.Id }, sport);
+        try
+        {
+            var sport = await _sportService.CreateAsync(request.Name);
+            return CreatedAtAction(nameof(GetById), new { id = sport.Id }, sport);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
-        await _sportService.DeleteAsync(id);
-        return NoContent();
+        try
+        {
+            await _sportService.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
+
+    [HttpPut("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateSportRequest request)
+    {
+        try
+        {
+            await _service.UpdateAsync(id, request.Name);
+            return Ok("Назву спорту оновлено");
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+}
+
+public class UpdateSportRequest
+{
+    public string Name { get; set; } = string.Empty;
 }
 
 public class CreateSportRequest

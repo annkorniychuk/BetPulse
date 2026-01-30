@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SportsPlatform.Services;
 using SportsPlatform.Domain.Entities;
 
@@ -15,7 +15,6 @@ public class CompetitionsController : ControllerBase
         _competitionService = competitionService;
     }
 
-    // GET
     [HttpGet]
     public async Task<ActionResult<List<Competition>>> GetAll()
     {
@@ -23,7 +22,6 @@ public class CompetitionsController : ControllerBase
         return Ok(competitions);
     }
 
-    // GET
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Competition>> GetById(int id)
     {
@@ -34,7 +32,6 @@ public class CompetitionsController : ControllerBase
         return Ok(competition);
     }
 
-    // POST
     [HttpPost]
     public async Task<ActionResult<Competition>> Create(CreateCompetitionRequest request)
     {
@@ -46,12 +43,26 @@ public class CompetitionsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = competition.Id }, competition);
     }
 
-    // DELETE
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         await _competitionService.DeleteAsync(id);
         return NoContent();
+    }
+
+    [HttpPut("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Update(int id, [FromBody] CreateCompetitionRequest request)
+    {
+        try
+        {
+            await _competitionService.UpdateAsync(id, request.Name, request.SportId);
+            return Ok("Змагання успішно оновлено");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
 

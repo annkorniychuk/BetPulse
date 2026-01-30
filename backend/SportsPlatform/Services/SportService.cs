@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SportsPlatform.Data;
 using SportsPlatform.Domain.Entities;
 
@@ -51,5 +51,14 @@ public class SportService
 
         _db.Sports.Remove(sport);
         await _db.SaveChangesAsync();
+    }
+
+    public async Task UpdateAsync(int id, string newName)
+    {
+        var sport = await _context.Sports.FindAsync(id);
+        if (sport == null) throw new Exception("Спорт не знайдено");
+
+        sport.Name = newName;
+        await _context.SaveChangesAsync();
     }
 }
