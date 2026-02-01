@@ -1,35 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css'; // Твій CSS (головне, щоб там не було зайвих відступів)
 
+// Components
+import SplashScreen from './components/SplashScreen';
+
+// Pages
+import HomePage from './pages/HomePage';
+import AdminLayout from './layouts/AdminLayout';
+import AdminUsersPage from './pages/AdminUsersPage';
+import AdminMatchesPage from './pages/AdminMatchesPage';
+import RegisterPage from './pages/RegisterPage';
 function App() {
-  const [count, setCount] = useState(0)
+    // Стан завантаження: true = показуємо заставку, false = показуємо сайт
+    const [isLoading, setIsLoading] = useState(true);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    // Якщо ще вантажиться - показуємо ТІЛЬКИ сплеш
+    if (isLoading) {
+        return <SplashScreen onFinish={() => setIsLoading(false)} />;
+    }
+
+    // Коли завантажилось - показуємо сайт
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/sports" element={<HomePage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                {/* Адмінка */}
+                <Route path="/admin" element={<AdminLayout />}>
+                    <Route path="users" element={<AdminUsersPage />} />
+                    <Route path="matches" element={<AdminMatchesPage />} />
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
-export default App
+export default App;

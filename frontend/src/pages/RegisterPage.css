@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+/* --- ГОЛОВНИЙ КОНТЕЙНЕР --- */
+.register-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #101010 !important;
+    font-family: 'Poppins', sans-serif;
+    z-index: 100;
+
+    /* 👇 ЦЕ ДОЗВОЛЯЄ ГОРТАТИ СТОРІНКУ, ЯКЩО КАРТКА НЕ ВЛАЗИТЬ */
+    overflow-y: auto;
+
+    /* Центрування */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Важливо: flex-start, щоб верх не обрізався при скролі */
+    padding-top: 50px; /* Відступ зверху */
+    padding-bottom: 50px; /* Відступ знизу, щоб було куди гортати */
+}
+
+/* --- КАРТКА (Фіксований розмір) --- */
+.register-card {
+    /* ТОЧНІ РОЗМІРИ З FIGMA */
+    width: 516px;
+    height: 828.5px;
+    flex-shrink: 0; /* Забороняємо стискатися */
+
+    background-color: #1E1E1E;
+    border-radius: 20px;
+    padding: 45px;
+
+    /* Flex для розподілу елементів */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+/* Верхній рядок (BP і Хрестик) */
+.card-top-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.bp-logo-small {
+    font-family: sans-serif;
+    font-style: italic;
+    font-weight: 900;
+    font-size: 28px;
+    color: #FEE000;
+    letter-spacing: -1px;
+}
+.bp-logo-small::first-letter {
+    color: white;
+}
+
+.close-icon {
+    color: #888;
+    cursor: pointer;
+    font-size: 24px;
+    transition: 0.2s;
+}
+.close-icon:hover {
+    color: white;
+}
+
+/* Заголовок */
+.register-title {
+    font-weight: 700;
+    font-size: 24px;
+    color: #FEE000;
+    margin-bottom: 40px; /* Більший відступ як на макеті */
+    text-align: center;
+}
+
+/* Поля вводу */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Відстань між полями */
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.custom-input {
+    width: 100%;
+    height: 50px;
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    border: none;
+    padding: 0 20px;
+    font-size: 14px;
+    color: #000000; /* Чорний текст */
+    outline: none;
+}
+
+/* Чекбокс */
+.checkbox-group {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.custom-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #FEE000;
+    flex-shrink: 0;
+    margin-top: 2px;
+    border: 1px solid white;
+}
+
+.checkbox-text {
+    font-size: 11px;
+    line-height: 1.6;
+    color: #FFFFFF; /* Білий текст */
+    text-align: left;
+    margin: 0;
+    opacity: 0.8;
+}
+
+/* Кнопка Реєстрація */
+.btn-register {
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(180deg, #FEE000 0%, #D0B907 100%);
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 20px;
+    color: #000000;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+/* Посилання "Вже маєте акаунт" */
+.login-link {
+    font-size: 15px;
+    color: #FFFFFF;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* --- СОЦМЕРЕЖІ (Притискаємо до низу) --- */
+.social-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+
+    /* 👇 ЦЕ МАГІЯ: Притискає цей блок до самого низу картки */
+    margin-top: auto;
+}
+
+.social-text {
+    font-size: 14px;
+    color: #FEE000;
+    font-weight: 600;
+}
+
+.social-icons {
+    display: flex;
+    gap: 12px;
+}
+
+.social-btn {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #E6E7E8 100%);
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    font-size: 22px;
+    color: black;
+}
+
+.support-link {
+    font-size: 12px;
+    color: #FFFFFF;
+    text-decoration: underline;
+    cursor: pointer;
+    opacity: 0.7;
+    margin-top: 5px;
+}

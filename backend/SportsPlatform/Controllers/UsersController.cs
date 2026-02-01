@@ -104,6 +104,19 @@ public class UsersController : ControllerBase
             .OrderByDescending(b => b.Id)
             .ToListAsync();
     }
+
+    // Отримати всіх користувачів
+    [HttpGet("/api/users")]
+    [AllowAnonymous]
+    //[Authorize(Roles = "Admin")]
+    public async Task<ActionResult<List<User>>> GetAllUsers()
+    {
+        var users = await _context.Users
+            .Select(u => new { u.Id, u.Name, u.Email, u.Role }) 
+            .ToListAsync();
+
+        return Ok(users);
+    }
 }
 
 public class UpdateProfileRequest
