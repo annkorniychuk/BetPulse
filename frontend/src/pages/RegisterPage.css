@@ -7,20 +7,23 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #101010 !important;
+    background-color: rgba(16, 16, 16, 0.7); /* напівпрозорий чорний */
     font-family: 'Poppins', sans-serif;
     z-index: 100;
 
-    /* 👇 ЦЕ ДОЗВОЛЯЄ ГОРТАТИ СТОРІНКУ, ЯКЩО КАРТКА НЕ ВЛАЗИТЬ */
     overflow-y: auto;
 
-    /* Центрування */
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Важливо: flex-start, щоб верх не обрізався при скролі */
-    padding-top: 50px; /* Відступ зверху */
-    padding-bottom: 50px; /* Відступ знизу, щоб було куди гортати */
+    align-items: flex-start;
+    padding-top: 50px;
+    padding-bottom: 50px;
+
+    /* Блюр для фону */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* для Safari */
 }
+
 
 /* --- КАРТКА (Фіксований розмір) --- */
 .register-card {

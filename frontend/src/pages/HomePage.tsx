@@ -1,16 +1,14 @@
-const HomePage = () => {
+import type {FunctionComponent} from 'react';
+import './HomePage.css';
+//import {Button, Nav} from "react-bootstrap";
+
+const HomePage: FunctionComponent = () => {
     return (
-        <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
-            backgroundColor: '#101010',
-            color: 'white'
-        }}>
-            <h1>Тут буде головна сторінка</h1>
+        <div className="frame-parent">
+            <h1>Main Page</h1>
         </div>
     );
 };
 
-export default HomePage;
+export default HomePage ;
+

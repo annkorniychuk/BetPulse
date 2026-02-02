@@ -1,23 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AxiosError } from 'axios'; // 👈 Додав імпорт для типізації помилок
+import { AxiosError } from 'axios'; //
 import './RegisterPage.css';
 import api from '../api/axiosConfig';
 
 const RegisterPage = () => {
     const navigate = useNavigate();
-
-    // Стан форми
     const [formData, setFormData] = useState({
         email: '',
         password: '',
         confirmPassword: '',
         agreed: false
     });
-
     const [showPassword, setShowPassword] = useState(false);
-
-    // Функція оновлення даних при вводі
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({
@@ -25,8 +20,6 @@ const RegisterPage = () => {
             [name]: type === 'checkbox' ? checked : value
         }));
     };
-
-    // 👇 Виправлено тип події (прибирає warning про deprecated)
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -53,12 +46,11 @@ const RegisterPage = () => {
         } catch (error) {
             console.error("Помилка реєстрації:", error);
 
-            // 👇 Виправлено: замість "any" використовуємо типізацію AxiosError
+
             const err = error as AxiosError;
 
             let errorMessage = "Щось пішло не так";
 
-            // Перевіряємо, чи надіслав сервер текст помилки
             if (err.response && err.response.data) {
                 errorMessage = typeof err.response.data === 'string'
                     ? err.response.data

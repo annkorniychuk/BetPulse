@@ -17,5 +17,33 @@ html, body, #root {
     background-color: #101010; /* Твій фон */
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Блокуємо скрол під час завантаження */
+    overflow: scroll; /* Блокуємо скрол під час завантаження */
+}
+.layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.layout-body {
+    flex: 1;
+    display: flex;
+}
+
+.sidebar {
+    width: 240px;
+    background: #111;
+    color: white;
+}
+
+.content {
+    flex: 1;
+    padding: 24px;
+}
+
+.header,
+.footer {
+    background: #222;
+    color: white;
+    padding: 16px;
 }
