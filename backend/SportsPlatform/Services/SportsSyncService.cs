@@ -35,7 +35,7 @@ public class SportsSyncService : BackgroundService
             try { await SyncDataAsync(); }
             catch (Exception ex) { Console.WriteLine($" Sync Error: {ex.Message}"); }
 
-            await Task.Delay(TimeSpan.FromHours(6), stoppingToken);
+            await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
         }
     }
 
