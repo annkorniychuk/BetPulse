@@ -31,6 +31,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<SportService>();
 builder.Services.AddScoped<CompetitionService>();
+builder.Services.AddHostedService<SportsPlatform.Services.SportsSyncService>();
 
 // Налаштування Аутентифікації (JWT) 
 builder.Services.AddAuthentication().AddJwtBearer(options =>

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SportsPlatform.Data;
@@ -11,9 +12,11 @@ using SportsPlatform.Data;
 namespace SportsPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260202130533_AddMatches")]
+    partial class AddMatches
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,54 +107,6 @@ namespace SportsPlatform.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Favorites");
-                });
-
-            modelBuilder.Entity("SportsPlatform.Domain.Entities.Match", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CompetitionId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ExternalId")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsManual")
-                        .HasColumnType("boolean");
-
-                    b.Property<double>("Odds1")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Odds2")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("OddsX")
-                        .HasColumnType("double precision");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Team1")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Team2")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompetitionId");
-
-                    b.ToTable("Matches");
                 });
 
             modelBuilder.Entity("SportsPlatform.Domain.Entities.Promotion", b =>
@@ -290,17 +245,6 @@ namespace SportsPlatform.Migrations
                     b.Navigation("Competition");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SportsPlatform.Domain.Entities.Match", b =>
-                {
-                    b.HasOne("SportsPlatform.Domain.Entities.Competition", "Competition")
-                        .WithMany()
-                        .HasForeignKey("CompetitionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Competition");
                 });
 
             modelBuilder.Entity("SportsPlatform.Domain.Entities.User", b =>

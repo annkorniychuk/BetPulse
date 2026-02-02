@@ -16,43 +16,44 @@ public class AppDbContext : DbContext
     public DbSet<Favorite> Favorites => Set<Favorite>();
     public DbSet<Bet> Bets => Set<Bet>();
     public DbSet<Promotion> Promotions => Set<Promotion>();
+    public DbSet<Match> Matches => Set<Match>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
 
-        // Унікальність назви спорту
         modelBuilder.Entity<Sport>()
             .HasIndex(x => x.Name)
             .IsUnique();
 
-        // Зв'язок змагання зі спортом
         modelBuilder.Entity<Competition>()
             .HasOne(x => x.Sport)
             .WithMany()
             .HasForeignKey(x => x.SportId);
 
-        // Унікальність пошти юзера
         modelBuilder.Entity<User>()
             .HasIndex(x => x.Email)
             .IsUnique();
 
-        // промокоди унікальнi, щоб не було дублів
         modelBuilder.Entity<Promotion>()
             .HasIndex(p => p.PromoCode)
             .IsUnique();
 
-        // Налаштування зв'язків для ставок 
         modelBuilder.Entity<Bet>()
             .HasOne(b => b.User)
             .WithMany(u => u.Bets)
             .HasForeignKey(b => b.UserId);
 
-        // Налаштування для "Улюбленого"
         modelBuilder.Entity<Favorite>()
             .HasOne(f => f.User)
             .WithMany(u => u.Favorites)
             .HasForeignKey(f => f.UserId);
+
+        modelBuilder.Entity<Match>()
+            .HasOne(m => m.Competition)
+            .WithMany()
+            .HasForeignKey(m => m.CompetitionId);
+
     }
 }
