@@ -1,20 +1,25 @@
 import { /*Container,*/ Button } from 'react-bootstrap';
-import { Outlet, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Frame3 from "../assets/Frame3.svg";
-import Sidebar from '../pages/SideBar';
+import Sidebar from '../components/sidebar/SideBar.tsx';
+import HomePage from "../pages/HomePage";
+import  '../styles/main_layout.css'
+
 
 const MainLayout = () => {
     const isAuth = !!localStorage.getItem('token');
 
     return (
-        <div className="layout d-flex flex-column min-vh-100">
-            <div className="frame-parent position-relative">
-                <img className="frame-child" src={Frame3} alt="Frame" />
-                <div className="sign-parent position-absolute top-0 end-0 m-3 d-flex gap-2">
+        <div className="main_conteiner">
+            <div className="navbar">
+                <div className="logo">
+                    <img src={Frame3} alt="Frame" />
+                </div>
+                <div className="auth_buttons">
                     {!isAuth ? (
                         <>
                             <Link to="/login">
-                                <Button variant="warning">Увійти</Button>
+                                <Button variant="custom">Увійти</Button>
                             </Link>
                             <Link to="/register">
                                 <Button variant="warning">Зареєструватись</Button>
@@ -27,12 +32,10 @@ const MainLayout = () => {
                     )}
                 </div>
             </div>
-            <div className="layout-body d-flex flex-grow-1 overflow-hidden">
+            <div className="content">
                 <main className="home-page-container">
                     <Sidebar />
-                    <div className="home-content">
-                        <Outlet />
-                    </div>
+                    <HomePage/>
                 </main>
             </div>
             <footer className="bg-dark text-secondary text-center py-3 border-top border-secondary">

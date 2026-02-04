@@ -1,7 +1,4 @@
-:root {
-    font-family: 'Roboto', sans-serif;
-    color-scheme: dark;
-}
+
 
 /* Скидаємо всі відступи браузера */
 * {
@@ -30,20 +27,7 @@ html, body, #root {
     display: flex;
 }
 
-.sidebar {
-    width: 240px;
-    background: #111;
-    color: white;
-}
-
 .content {
     flex: 1;
-    padding: 24px;
 }
 
-.header,
-.footer {
-    background: #222;
-    color: white;
-    padding: 16px;
-}

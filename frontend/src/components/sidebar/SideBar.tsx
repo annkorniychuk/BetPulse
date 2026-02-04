@@ -1,17 +1,17 @@
 import type { FunctionComponent } from 'react';
 import { useState } from 'react';
-import './Sidebar.css';
+import './SideBar.css';
 
-import menuIcon from '../assets/icons/Vector-9.svg';
-import homeIcon from '../assets/icons/Vector-8.svg';
-import basketballIcon from '../assets/icons/Vector-6.svg';
-import footballIcon from '../assets/icons/Vector-3.svg';
-import tennisIcon from '../assets/icons/Vector-2.svg';
-import volleyballIcon from '../assets/icons/Vector-1.svg';
-import catalogIcon from '../assets/icons/Vector.svg';
-import cardsIcon from '../assets/icons/Vector-4.svg';
-import liveCasinoIcon from '../assets/icons/Vector-7.svg';
-import arrowIcon from '../assets/icons/Vector-5.svg';
+import menuIcon from '../../assets/icons/Vector-9.svg';
+import homeIcon from '../../assets/icons/Vector-8.svg';
+import basketballIcon from '../../assets/icons/Vector-6.svg';
+import footballIcon from '../../assets/icons/Vector-3.svg';
+import tennisIcon from '../../assets/icons/Vector-2.svg';
+import volleyballIcon from '../../assets/icons/Vector-1.svg';
+import catalogIcon from '../../assets/icons/Vector.svg';
+import cardsIcon from '../../assets/icons/Vector-4.svg';
+import liveCasinoIcon from '../../assets/icons/Vector-7.svg';
+import arrowIcon from '../../assets/icons/arrow.svg';
 
 interface SubMenuItem {
     label: string;
@@ -94,20 +94,23 @@ const Sidebar: FunctionComponent = () => {
         <>
             {/* Sidebar */}
             <div
-                className={`sidebar ${open ? 'open' : ''}`}
+                className={`sidebar ${open ? 'sidebar--open' : ''}`}
                 onMouseEnter={() => setOpen(true)}
                 onMouseLeave={() => setOpen(false)}
             >
                 {menuItems.map((item, index) => (
                     <div key={index} className="sidebar-item-wrapper">
-                        <button className="sidebar-item">
+                        <button className={`sidebar-item ${item.label === 'Головна сторінка' ? 'item-home' : ''}`}>
                             <img src={item.icon} alt={item.label} className="sidebar-icon" />
                             <span className="sidebar-label">{item.label}</span>
-                            {item.subMenu && <img src={item.icon2} alt="Expand" className="sidebar-arrow" />}
+                            {item.subMenu && (
+                                <img src={item.icon2} alt="Expand" className="sidebar-arrow" />
+                            )}
                         </button>
 
                         {item.subMenu && (
-                            <div className="sidebar-submenu">
+                            <div className={`sidebar-submenu ${open ? 'visible' : 'hidden'}`}>
+                                {/* Прибираємо умову "open &&", щоб CSS міг анімувати висоту */}
                                 {item.subMenu.map((sub, subIndex) => (
                                     <div key={subIndex} className="submenu-item">
                                         <span>{sub.label}</span>
@@ -121,7 +124,7 @@ const Sidebar: FunctionComponent = () => {
             </div>
 
             {/* Overlay для блюру */}
-            <div className={`sidebar-overlay ${open ? 'active' : ''}`}></div>
+            <div className={`sidebar-overlay ${open ? 'sidebar-overlay--active' : ''}`}></div>
         </>
     );
 };
