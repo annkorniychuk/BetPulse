@@ -32,11 +32,16 @@ public class AuthController : ControllerBase
         // Хешування паролю
         string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
+        // ім'я генерується автоматично
+        string generatedName = request.Email.Contains("@")
+            ? request.Email.Split('@')[0]
+            : "User";
+
         var user = new User
         {
             Email = request.Email,
             PasswordHash = passwordHash,
-            Name = request.Name,
+            Name = generatedName,
             Role = "User" // За замовчуванням
         };
 

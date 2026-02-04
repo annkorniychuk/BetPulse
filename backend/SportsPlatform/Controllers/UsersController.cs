@@ -42,7 +42,7 @@ public class UsersController : ControllerBase
         });
     }
 
-    // Оновити ім'я та пошту 
+    /* Оновити ім'я та пошту 
     [HttpPut("update")]
     public async Task<IActionResult> UpdateProfile(UpdateProfileRequest request)
     {
@@ -55,7 +55,49 @@ public class UsersController : ControllerBase
 
         await _context.SaveChangesAsync();
         return Ok("Дані оновлено");
+    } */
+
+    // оновити тільки пошту
+    [HttpPut("update-email")]
+    public async Task<IActionResult> UpdateEmail([FromBody] UpdateEmailRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Email) || !request.Email.Contains("@"))
+            return BadRequest("Некоректний формат пошти");
+
+        var userId = GetCurrentUserId();
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return NotFound();
+
+        if (user.Email == request.Email)
+            return Ok("Введіть нову пошту");
+
+        var emailTaken = await _context.Users.AnyAsync(u => u.Email == request.Email && u.Id != userId);
+        if (emailTaken)
+            return BadRequest("Ця електронна пошта вже використовується іншим користувачем");
+
+        user.Email = request.Email;
+
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Пошту успішно оновлено", newEmail = user.Email });
     }
+    // оновити тільки ім'я
+    [HttpPut("update-name")]
+    public async Task<IActionResult> UpdateName([FromBody] UpdateNameRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Name))
+            return BadRequest("Ім'я не може бути пустим");
+
+        var userId = GetCurrentUserId();
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return NotFound();
+
+        user.Name = request.Name;
+
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Ім'я успішно оновлено", newName = user.Name });
+    }
+
+
 
     // Змінити пароль
     [HttpPut("change-password")]
@@ -119,9 +161,13 @@ public class UsersController : ControllerBase
     }
 }
 
-public class UpdateProfileRequest
+public class UpdateNameRequest
 {
     public string Name { get; set; } = string.Empty;
+}
+
+public class UpdateEmailRequest
+{
     public string Email { get; set; } = string.Empty;
 }
 
