@@ -11,6 +11,7 @@ import AdminLayout from './layouts/AdminLayout';
 import AdminUsersPage from './pages/AdminUsersPage';
 import AdminMatchesPage from './pages/AdminMatchesPage';
 import RegisterPage from './pages/RegisterPage';
+import LoginPage from "./pages/LoginPage.tsx";
 function App() {
     const [isLoading, setIsLoading] = useState(true);
     if (isLoading) {
@@ -23,6 +24,7 @@ function App() {
                     <Route path="/" element={<HomePage />} />
                     <Route path="/sports" element={<HomePage />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/login" element={<LoginPage />} />
                 </Route>
                 <Route path="/admin" element={<AdminLayout />}>
                     <Route path="users" element={<AdminUsersPage />} />
