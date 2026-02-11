@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SportsPlatform.Domain.Entities;
 using SportsPlatform.Services;
+using SportsPlatform.Dtos;
 
 namespace SportsPlatform.Controllers;
 
@@ -17,9 +18,24 @@ public class SportsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Sport>>> GetAll()
+    public async Task<ActionResult<List<SportSidebarDto>>> GetAll()
     {
-        return await _service.GetAllAsync();
+        var sports = await _service.GetAllAsync();
+
+        var result = sports.Select(s => new SportSidebarDto
+        {
+            Id = s.Id,
+            Name = s.Name,
+            Competitions = s.Competitions.Select(c => new CompetitionSidebarDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Country = c.Country ?? "Світ",
+                Count = 0 // Поки 0, бо логіка підрахунку матчів складна, зробимо пізніше
+            }).ToList()
+        }).ToList();
+
+        return Ok(result);
     }
 
     [HttpPost]

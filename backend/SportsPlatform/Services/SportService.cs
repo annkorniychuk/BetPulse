@@ -15,9 +15,11 @@ public class SportService
 
     public async Task<List<Sport>> GetAllAsync()
     {
-        return await _context.Sports.ToListAsync();
+        return await _context.Sports
+            .Include(s => s.Competitions)
+            .OrderBy(s => s.Name)
+            .ToListAsync();
     }
-
     public async Task<Sport> CreateAsync(string name)
     {
         var sport = new Sport { Name = name };

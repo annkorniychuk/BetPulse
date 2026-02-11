@@ -28,9 +28,10 @@ public class AppDbContext : DbContext
             .IsUnique();
 
         modelBuilder.Entity<Competition>()
-            .HasOne(x => x.Sport)
-            .WithMany()
-            .HasForeignKey(x => x.SportId);
+            .HasOne(c => c.Sport)
+            .WithMany(s => s.Competitions)
+            .HasForeignKey(c => c.SportId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<User>()
             .HasIndex(x => x.Email)

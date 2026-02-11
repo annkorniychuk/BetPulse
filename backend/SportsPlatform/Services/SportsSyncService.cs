@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using SportsPlatform.Data;
 using SportsPlatform.Domain.Entities;
+using Microsoft.Extensions.Logging; // 👇 Додали логер
 using System.Net.Http.Json;
 
 namespace SportsPlatform.Services;
@@ -11,109 +12,163 @@ public class SportsSyncService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly HttpClient _httpClient;
+    private readonly ILogger<SportsSyncService> _logger; // 👇 Логер
 
     private const string ApiKey = "6924dcf04786d132d819ba356edba887";
 
-    private readonly List<(string Key, string SportName, string CompetitionName)> _leagues = new()
+    private readonly List<(string Key, string SportName, string CompetitionName, string Country)> _leagues = new()
     {
-        ("soccer_epl", "Футбол", "Прем'єр-ліга Англії"),
-        ("soccer_uefa_champs_league", "Футбол", "Ліга Чемпіонів"),
-        ("basketball_nba", "Баскетбол", "NBA"),
-        ("tennis_atp_wimbledon", "Теніс", "Wimbledon")
+        ("soccer_epl", "Футбол", "Прем'єр-ліга Англії", "Англія"),
+        ("soccer_uefa_champs_league", "Футбол", "Ліга Чемпіонів", "Європа"),
+        ("basketball_nba", "Баскетбол", "NBA", "США"),
+        ("tennis_atp_wimbledon", "Теніс", "Wimbledon", "Англія")
     };
 
-    public SportsSyncService(IServiceProvider serviceProvider)
+    public SportsSyncService(IServiceProvider serviceProvider, ILogger<SportsSyncService> logger)
     {
         _serviceProvider = serviceProvider;
+        _logger = logger; // 👇 Отримуємо логер
         _httpClient = new HttpClient();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("🔥 СЕРВІС СИНХРОНІЗАЦІЇ ЗАПУЩЕНО! ЧЕКАЄМО СТАРТУ...");
+
+        // Робимо затримку 5 секунд, щоб база точно встигла піднятися
+        await Task.Delay(5000, stoppingToken);
+
         while (!stoppingToken.IsCancellationRequested)
         {
-            try { await SyncDataAsync(); }
-            catch (Exception ex) { Console.WriteLine($" Sync Error: {ex.Message}"); }
+            try
+            {
+                await SyncDataAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"❌ КРИТИЧНА ПОМИЛКА СЕРВІСУ: {ex.Message}");
+            }
 
+            // Наступний запуск через 24 години
             await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
         }
     }
 
     private async Task SyncDataAsync()
     {
+        _logger.LogInformation("🔄 ПОЧИНАЮ ЗАВАНТАЖЕННЯ ДАНИХ...");
+
         using (var scope = _serviceProvider.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             foreach (var league in _leagues)
             {
-                var sport = await context.Sports.FirstOrDefaultAsync(s => s.Name == league.SportName);
-                if (sport == null)
+                try
                 {
-                    sport = new Sport { Name = league.SportName };
-                    context.Sports.Add(sport);
-                    await context.SaveChangesAsync(); 
-                }
-
-                var competition = await context.Competitions
-                    .FirstOrDefaultAsync(c => c.Name == league.CompetitionName && c.SportId == sport.Id);
-
-                if (competition == null)
-                {
-                    competition = new Competition { Name = league.CompetitionName, SportId = sport.Id };
-                    context.Competitions.Add(competition);
-                    await context.SaveChangesAsync(); 
-                }
-
-                var url = $"https://api.the-odds-api.com/v4/sports/{league.Key}/odds/?apiKey={ApiKey}&regions=eu&markets=h2h";
-                var apiMatches = await _httpClient.GetFromJsonAsync<List<ApiMatchDto>>(url);
-
-                if (apiMatches == null) continue;
-
-                foreach (var item in apiMatches)
-                {
-                    var dbMatch = await context.Matches.FirstOrDefaultAsync(m => m.ExternalId == item.id);
-
-                    var bookmaker = item.bookmakers.FirstOrDefault();
-                    var market = bookmaker?.markets.FirstOrDefault(m => m.key == "h2h");
-
-                    double o1 = 1.0, o2 = 1.0, oX = 1.0;
-                    if (market != null)
+                    // 1. Спорт
+                    var sport = await context.Sports.FirstOrDefaultAsync(s => s.Name == league.SportName);
+                    if (sport == null)
                     {
-                        o1 = market.outcomes.FirstOrDefault(o => o.name == item.home_team)?.price ?? 1.0;
-                        o2 = market.outcomes.FirstOrDefault(o => o.name == item.away_team)?.price ?? 1.0;
-                        oX = market.outcomes.FirstOrDefault(o => o.name == "Draw")?.price ?? 1.0;
+                        sport = new Sport { Name = league.SportName };
+                        context.Sports.Add(sport);
+                        await context.SaveChangesAsync();
                     }
 
-                    if (dbMatch == null)
+                    // 2. Змагання (Ліга) + КРАЇНА
+                    var competition = await context.Competitions
+                        .FirstOrDefaultAsync(c => c.Name == league.CompetitionName && c.SportId == sport.Id);
+
+                    if (competition == null)
                     {
-                        context.Matches.Add(new Match
+                        competition = new Competition
                         {
-                            ExternalId = item.id,
-                            Team1 = item.home_team,
-                            Team2 = item.away_team,
-                            StartTime = item.commence_time,
-                            Odds1 = o1,
-                            Odds2 = o2,
-                            OddsX = oX,
-                            CompetitionId = competition.Id, 
-                            IsManual = false
-                        });
+                            Name = league.CompetitionName,
+                            SportId = sport.Id,
+                            Country = league.Country
+                        };
+                        context.Competitions.Add(competition);
+                        await context.SaveChangesAsync();
+                        _logger.LogInformation($"✅ СТВОРЕНО ЛІГУ: {league.CompetitionName} -> {league.Country}");
                     }
-                    else if (!dbMatch.IsManual) 
+                    else if (competition.Country != league.Country || string.IsNullOrEmpty(competition.Country))
                     {
-                        dbMatch.StartTime = item.commence_time;
-                        dbMatch.Odds1 = o1;
-                        dbMatch.Odds2 = o2;
-                        dbMatch.OddsX = oX;
+                        competition.Country = league.Country;
+                        await context.SaveChangesAsync();
+                        _logger.LogInformation($"♻️ ОНОВЛЕНО КРАЇНУ: {league.CompetitionName} -> {league.Country}");
                     }
+
+                    // 3. Матчі
+                    var url = $"https://api.the-odds-api.com/v4/sports/{league.Key}/odds/?apiKey={ApiKey}&regions=eu&markets=h2h";
+                    var response = await _httpClient.GetAsync(url);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var err = await response.Content.ReadAsStringAsync();
+                        _logger.LogError($"⛔ ПОМИЛКА API ({league.Key}): {response.StatusCode} - {err}");
+                        continue;
+                    }
+
+                    var apiMatches = await response.Content.ReadFromJsonAsync<List<ApiMatchDto>>();
+
+                    if (apiMatches == null || apiMatches.Count == 0)
+                    {
+                        _logger.LogWarning($"⚠️ НЕМАЄ МАТЧІВ ДЛЯ: {league.CompetitionName}");
+                        continue;
+                    }
+
+                    int added = 0;
+                    int updated = 0;
+
+                    foreach (var item in apiMatches)
+                    {
+                        var dbMatch = await context.Matches.FirstOrDefaultAsync(m => m.ExternalId == item.id);
+
+                        var bookmaker = item.bookmakers?.FirstOrDefault();
+                        var market = bookmaker?.markets?.FirstOrDefault(m => m.key == "h2h");
+                        double o1 = 1.0, o2 = 1.0, oX = 1.0;
+                        if (market?.outcomes != null)
+                        {
+                            o1 = market.outcomes.FirstOrDefault(o => o.name == item.home_team)?.price ?? 1.0;
+                            o2 = market.outcomes.FirstOrDefault(o => o.name == item.away_team)?.price ?? 1.0;
+                            oX = market.outcomes.FirstOrDefault(o => o.name == "Draw")?.price ?? 1.0;
+                        }
+
+                        if (dbMatch == null)
+                        {
+                            context.Matches.Add(new Match
+                            {
+                                ExternalId = item.id,
+                                Team1 = item.home_team,
+                                Team2 = item.away_team,
+                                StartTime = item.commence_time,
+                                Odds1 = o1,
+                                Odds2 = o2,
+                                OddsX = oX,
+                                CompetitionId = competition.Id,
+                                IsManual = false
+                            });
+                            added++;
+                        }
+                        else if (!dbMatch.IsManual)
+                        {
+                            dbMatch.StartTime = item.commence_time;
+                            dbMatch.Odds1 = o1; dbMatch.Odds2 = o2; dbMatch.OddsX = oX;
+                            updated++;
+                        }
+                    }
+                    await context.SaveChangesAsync();
+                    _logger.LogInformation($"📥 {league.CompetitionName}: +{added} нових, ~{updated} оновлених матчів.");
                 }
-                await context.SaveChangesAsync();
+                catch (Exception ex)
+                {
+                    _logger.LogError($"💥 ПОМИЛКА ОБРОБКИ ({league.Key}): {ex.Message}");
+                }
             }
         }
+        _logger.LogInformation("🏁 СИНХРОНІЗАЦІЯ ЗАВЕРШЕНА. НАСТУПНИЙ ЗАПУСК ЧЕРЕЗ 24 ГОДИНИ.");
     }
 
-    // DTO класи для API 
     public class ApiMatchDto
     {
         public string id { get; set; }
