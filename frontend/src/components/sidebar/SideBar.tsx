@@ -72,7 +72,6 @@ const Sidebar: FunctionComponent = () => {
                 const response = await api.get<SportDto[]>('/sports');
                 const sportsData = response.data;
 
-                // 👇 ВИПРАВЛЕНО: явно вказали типи (sport: SportDto)
                 const dynamicSports: MenuItem[] = sportsData.map((sport: SportDto) => {
                     const countryCounts: { [key: string]: number } = {};
 
@@ -81,7 +80,7 @@ const Sidebar: FunctionComponent = () => {
                         if (!countryCounts[country]) {
                             countryCounts[country] = 0;
                         }
-                        countryCounts[country]++;
+                        countryCounts[country] += comp.count;
                     });
 
                     const subMenu: SubMenuItem[] = Object.keys(countryCounts).map((countryName) => ({
@@ -95,7 +94,6 @@ const Sidebar: FunctionComponent = () => {
                         label: sport.name,
                         icon2: arrowIcon,
                         isSport: true,
-                        // 👇 ВИПРАВЛЕНО: явно вказали типи (comp: CompetitionDto)
                         subMenu: subMenu
                     };
                 });

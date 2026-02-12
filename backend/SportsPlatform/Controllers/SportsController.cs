@@ -10,7 +10,7 @@ namespace SportsPlatform.Controllers;
 [ApiController]
 public class SportsController : ControllerBase
 {
-    private readonly SportService _service; 
+    private readonly SportService _service;
 
     public SportsController(SportService service)
     {
@@ -20,21 +20,7 @@ public class SportsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<SportSidebarDto>>> GetAll()
     {
-        var sports = await _service.GetAllAsync();
-
-        var result = sports.Select(s => new SportSidebarDto
-        {
-            Id = s.Id,
-            Name = s.Name,
-            Competitions = s.Competitions.Select(c => new CompetitionSidebarDto
-            {
-                Id = c.Id,
-                Name = c.Name,
-                Country = c.Country ?? "Світ",
-                Count = 0 // Поки 0, бо логіка підрахунку матчів складна, зробимо пізніше
-            }).ToList()
-        }).ToList();
-
+        var result = await _service.GetSidebarDataAsync();
         return Ok(result);
     }
 
@@ -77,6 +63,7 @@ public class SportsController : ControllerBase
     }
 }
 
+// DTO для створення/оновлення
 public class CreateSportRequest
 {
     public string Name { get; set; } = string.Empty;

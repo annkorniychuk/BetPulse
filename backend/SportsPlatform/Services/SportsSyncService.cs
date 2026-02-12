@@ -21,7 +21,12 @@ public class SportsSyncService : BackgroundService
         ("soccer_epl", "Футбол", "Прем'єр-ліга Англії", "Англія"),
         ("soccer_uefa_champs_league", "Футбол", "Ліга Чемпіонів", "Європа"),
         ("basketball_nba", "Баскетбол", "NBA", "США"),
-        ("tennis_atp_wimbledon", "Теніс", "Wimbledon", "Англія")
+        ("tennis_atp_wimbledon", "Теніс", "Wimbledon", "Англія"),
+
+        ("soccer_spain_la_liga", "Футбол", "Ла Ліга", "Іспанія"),
+        ("soccer_italy_serie_a", "Футбол", "Серія А", "Італія"),
+        ("soccer_germany_bundesliga", "Футбол", "Бундесліга", "Німеччина"),
+        ("soccer_france_ligue_one", "Футбол", "Ліга 1", "Франція"),
     };
 
     public SportsSyncService(IServiceProvider serviceProvider, ILogger<SportsSyncService> logger)
