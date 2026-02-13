@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SportsPlatform.Data;
 using SportsPlatform.Domain.Entities;
-using SportsPlatform.Dtos; // 👈 Не забудь додати цей рядок!
+using SportsPlatform.Dtos; 
 
 namespace SportsPlatform.Services;
 
@@ -14,7 +14,7 @@ public class SportService
         _context = context;
     }
 
-    // Цей метод для адмінки (повертає просто сутності)
+    // Цей метод для адмінки 
     public async Task<List<Sport>> GetAllAsync()
     {
         return await _context.Sports
@@ -23,16 +23,13 @@ public class SportService
             .ToListAsync();
     }
 
-    // 👇 НОВИЙ МЕТОД СПЕЦІАЛЬНО ДЛЯ САЙДБАРУ 👇
     public async Task<List<SportSidebarDto>> GetSidebarDataAsync()
     {
-        // 1. Тягнемо спорт і змагання
         var sports = await _context.Sports
             .Include(s => s.Competitions)
-            .OrderBy(s => s.Id) // Сортуємо по ID (зазвичай футбол перший)
+            .OrderBy(s => s.Id) 
             .ToListAsync();
 
-        // 2. Конвертуємо в DTO і рахуємо матчі
         var result = sports.Select(s => new SportSidebarDto
         {
             Id = s.Id,
@@ -41,9 +38,7 @@ public class SportService
             {
                 Id = c.Id,
                 Name = c.Name,
-                // Заповнюємо країну
                 Country = c.Country ?? "Світ",
-                // Рахуємо кількість матчів у цій лізі
                 Count = _context.Matches.Count(m => m.CompetitionId == c.Id)
             }).ToList()
         }).ToList();

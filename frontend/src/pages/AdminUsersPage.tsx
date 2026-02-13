@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Table, Spinner, Card, Badge, Button } from 'react-bootstrap';
+import { Table, Spinner } from 'react-bootstrap';
 import api from '../api/axiosConfig';
 import type { User } from '../types';
 
@@ -8,18 +8,29 @@ const AdminUsersPage = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        api.get('/users').then(res => setUsers(res.data)).finally(() => setLoading(false));
+        // Симуляція затримки або реальний запит
+        api.get('/users')
+            .then(res => setUsers(res.data))
+            .catch(err => console.error("Error loading users:", err))
+            .finally(() => setLoading(false));
     }, []);
 
-    if (loading) return <Spinner animation="border" variant="primary" />;
+    if (loading) {
+        return (
+            <div className="spinner-container">
+                <Spinner animation="border" className="custom-spinner" />
+            </div>
+        );
+    }
 
     return (
         <div>
-            <h2 className="mb-4">👥 Користувачі системи</h2>
-            <Card className="shadow-sm border-0">
-                <Card.Body className="p-0">
-                    <Table striped hover className="m-0 align-middle">
-                        <thead className="bg-light">
+            <h2 className="users-page-title"> Користувачі системи</h2>
+
+            <div className="card-pulse">
+                <div className="card-body p-0">
+                    <Table className="table-pulse" responsive hover>
+                        <thead>
                         <tr>
                             <th className="ps-4">ID</th>
                             <th>Ім'я</th>
@@ -32,24 +43,32 @@ const AdminUsersPage = () => {
                         <tbody>
                         {users.map(user => (
                             <tr key={user.id}>
-                                <td className="ps-4">#{user.id}</td>
-                                <td className="fw-bold">{user.name}</td>
+                                <td className="ps-4" style={{color: '#999'}}>#{user.id}</td>
+
+                                <td className="user-name-cell">{user.name}</td>
+
                                 <td>{user.email}</td>
+
                                 <td>
-                                    <Badge bg={user.role === 'Admin' ? 'danger' : 'info'}>
+                                    {/* Логіка вибору класу для бейджа */}
+                                    <span className={`custom-badge ${user.role === 'Admin' ? 'admin' : 'user'}`}>
                                         {user.role}
-                                    </Badge>
+                                    </span>
                                 </td>
-                                <td><Badge bg="success">Активний</Badge></td>
+
                                 <td>
-                                    <Button variant="link" className="text-decoration-none">Ред.</Button>
+                                    <span className="custom-badge active">Активний</span>
+                                </td>
+
+                                <td>
+                                    <button className="btn-edit-link">Ред.</button>
                                 </td>
                             </tr>
                         ))}
                         </tbody>
                     </Table>
-                </Card.Body>
-            </Card>
+                </div>
+            </div>
         </div>
     );
 };

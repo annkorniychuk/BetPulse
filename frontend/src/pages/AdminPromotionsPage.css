@@ -1,0 +1,50 @@
+.promotions-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 25px;
+}
+
+/* Стиль для самого коду (жовтий, жирний) */
+.promo-code-text {
+    color: #fee000;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-family: 'Courier New', monospace; /* Щоб виглядало як код */
+}
+
+/* Бейджі статусу (Активний / Минулий) */
+.promo-status-badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.promo-status-badge.active {
+    background-color: rgba(25, 135, 84, 0.15); /* Зелений напівпрозорий */
+    color: #20c997;
+    border: 1px solid rgba(25, 135, 84, 0.3);
+}
+
+.promo-status-badge.expired {
+    background-color: rgba(108, 117, 125, 0.15); /* Сірий напівпрозорий */
+    color: #adb5bd;
+    border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+/* Кнопка видалення (іконка) */
+.btn-delete-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    transition: transform 0.2s;
+    padding: 0 5px;
+}
+
+.btn-delete-icon:hover {
+    transform: scale(1.2);
+}

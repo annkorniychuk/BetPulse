@@ -1,9 +1,15 @@
-// 👇 ЗМІНА ТУТ: додали "type" перед FC та FormEvent
 import { useState, type FC, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import api from '../api/axiosConfig';
 import './LoginPage.css';
+
+interface LoginResponse {
+    token: string;
+    role: string;
+    email: string;
+    id: number;
+}
 
 const LoginPage: FC = () => {
     const navigate = useNavigate();
@@ -25,17 +31,21 @@ const LoginPage: FC = () => {
         e.preventDefault();
 
         try {
-            const response = await api.post('/auth/login', {
+
+            const response = await api.post<LoginResponse>('/auth/login', {
                 email: formData.email,
                 password: formData.password
             });
 
-            // Зберігаємо токен
-            const token = response.data;
+            const { token, role, email } = response.data;
+
             localStorage.setItem('token', token);
+            localStorage.setItem('userRole', role);   // Для адмін-кнопки
+            localStorage.setItem('userEmail', email); // Для профілю
 
-            console.log("Вхід успішний!");
+            console.log(`Вхід успішний! Роль: ${role}`);
 
+            // Переходимо на головну
             navigate('/');
 
         } catch (error) {
@@ -43,6 +53,8 @@ const LoginPage: FC = () => {
             const err = error as AxiosError;
 
             let errorMessage = "Невірний логін або пароль";
+
+            // Обробка помилки (якщо сервер повернув текст або JSON)
             if (err.response && err.response.data) {
                 errorMessage = typeof err.response.data === 'string'
                     ? err.response.data
@@ -90,6 +102,7 @@ const LoginPage: FC = () => {
                             <span
                                 className="password-eye"
                                 onClick={() => setShowPassword(!showPassword)}
+                                style={{ cursor: 'pointer' }}
                             >
                                 {showPassword ? (
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5C7.63636 5 4 8.63636 2 12C4 15.3636 7.63636 19 12 19C16.3636 19 20 15.3636 22 12C20 8.63636 16.3636 5 12 5Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>

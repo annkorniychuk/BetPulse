@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600&display=swap');
+
+/* --- ГЛОБАЛЬНІ НАЛАШТУВАННЯ ШРИФТІВ --- */
+/* Цей блок змушує всі елементи (навіть кнопки та інпути) використовувати Poppins */
+* {
+    font-family: 'Poppins', sans-serif !important;
+}
+
+/* Глобальні налаштування обгортки */
+.admin-wrapper {
+    background-color: #000000;
+    min-height: 100vh;
+    color: #ffffff;
+    display: flex;
+}
+
+/* --- САЙДБАР --- */
+.admin-sidebar {
+    width: 260px;
+    background-color: #141414;
+    border-right: 1px solid #373737;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    flex-shrink: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.admin-sidebar .brand {
+    font-size: 24px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 40px;
+    text-decoration: none;
+    display: block;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Контейнер для посилань */
+.admin-nav {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+}
+
+.admin-nav-link {
+    color: #999;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: block;
+    border: none;
+    background: transparent;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    font-size: 24px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.admin-nav-link:hover {
+    color: #fff;
+    background-color: #252525;
+    font-family: 'Poppins', sans-serif;
+}
+
+.admin-nav-link.active {
+    background: linear-gradient(179.71deg, #fff, #e6e7e8);
+    color: #000 !important;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Футер сайдбару (Кнопка "На сайт") */
+.admin-sidebar-footer {
+    margin-top: auto;
+    border-top: 1px solid #373737;
+    padding-top: 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-back-site {
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid #555;
+    color: #ddd;
+    padding: 8px;
+    border-radius: 4px;
+    transition: 0.2s;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-back-site:hover {
+    border-color: #fff;
+    color: #fff;
+    background-color: #252525;
+}
+
+/* --- ВЕРХНЯ ПАНЕЛЬ --- */
+.admin-header {
+    background-color: #141414;
+    border-bottom: 1px solid #373737;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+    justify-content: space-between;
+}
+
+.admin-header-title {
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.admin-user-badge {
+    color: #999;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+/* --- КОНТЕНТ --- */
+.admin-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.admin-page-body {
+    padding: 30px 40px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+/* --- КАРТКИ --- */
+.card-pulse {
+    background-color: #141414;
+    border: 1px solid #373737;
+    border-radius: 8px;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.card-pulse .card-header {
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #373737;
+    font-weight: 600;
+    padding: 15px 20px;
+}
+
+.card-pulse .card-body {
+    padding: 20px;
+}
+
+/* --- ТАБЛИЦІ --- */
+.table-pulse {
+    width: 100%;
+    color: #fff;
+    margin-bottom: 0;
+}
+
+.table-pulse th {
+    background-color: #1a1a1a !important;
+    color: #999;
+    border-bottom: 1px solid #373737;
+    font-weight: 600;
+    padding: 12px;
+}
+
+.table-pulse td {
+    background-color: #141414 !important;
+    border-bottom: 1px solid #373737;
+    color: #fff;
+    padding: 12px;
+    vertical-align: middle;
+}
+
+.table-pulse tr:last-child td {
+    border-bottom: none;
+}
+
+/* --- ФОРМИ (Input) --- */
+.form-control-pulse {
+    background-color: #000 !important;
+    border: 1px solid #373737 !important;
+    color: #fff !important;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.form-control-pulse:focus {
+    border-color: #fee000 !important;
+    box-shadow: none !important;
+}
+
+/* --- КНОПКИ --- */
+.btn-custom {
+    background: linear-gradient(179.71deg, #fff, #e6e7e8);
+    color: #000000 !important;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+}
+
+.btn-warning-pulse {
+    background-color: #fee000 !important;
+    color: #000 !important;
+    font-weight: 600;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+}
+
+.btn-warning-pulse:hover {
+    background-color: #e6ca00 !important;
+}
+
+.btn-danger-pulse {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border: none;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 4px;
+}

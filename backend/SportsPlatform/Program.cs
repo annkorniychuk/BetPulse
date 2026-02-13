@@ -31,7 +31,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<SportService>();
 builder.Services.AddScoped<CompetitionService>();
-builder.Services.AddHostedService<SportsPlatform.Services.SportsSyncService>();
+//builder.Services.AddHostedService<SportsPlatform.Services.SportsSyncService>();
 //оце розкоментувати тільки коли треба буде синхронізація
 
 // Налаштування Аутентифікації (JWT) 

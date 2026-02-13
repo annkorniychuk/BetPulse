@@ -12,7 +12,7 @@ public class SportsSyncService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly HttpClient _httpClient;
-    private readonly ILogger<SportsSyncService> _logger; // 👇 Логер
+    private readonly ILogger<SportsSyncService> _logger; 
 
     private const string ApiKey = "6924dcf04786d132d819ba356edba887";
 
@@ -32,7 +32,7 @@ public class SportsSyncService : BackgroundService
     public SportsSyncService(IServiceProvider serviceProvider, ILogger<SportsSyncService> logger)
     {
         _serviceProvider = serviceProvider;
-        _logger = logger; // 👇 Отримуємо логер
+        _logger = logger; 
         _httpClient = new HttpClient();
     }
 
@@ -40,7 +40,7 @@ public class SportsSyncService : BackgroundService
     {
         _logger.LogInformation("🔥 СЕРВІС СИНХРОНІЗАЦІЇ ЗАПУЩЕНО! ЧЕКАЄМО СТАРТУ...");
 
-        // Робимо затримку 5 секунд, щоб база точно встигла піднятися
+        
         await Task.Delay(5000, stoppingToken);
 
         while (!stoppingToken.IsCancellationRequested)

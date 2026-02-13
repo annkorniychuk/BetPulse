@@ -52,7 +52,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<string>> Login(LoginDto request)
+    public async Task<ActionResult<object>> Login(LoginDto request)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
 
@@ -63,7 +63,14 @@ public class AuthController : ControllerBase
             return BadRequest("Невірний пароль.");
 
         string token = CreateToken(user);
-        return Ok(token);
+
+        return Ok(new
+        {
+            token = token,
+            role = user.Role,       
+            email = user.Email,     
+            id = user.Id            
+        });
     }
 
     private string CreateToken(User user)

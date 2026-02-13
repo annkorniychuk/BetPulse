@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Card, Table, Button, Form, Row, Col, Badge } from 'react-bootstrap';
+import { Table, Button, Form, Row, Col } from 'react-bootstrap';
+import './AdminMatchesPage.css';
 
 const AdminMatchesPage = () => {
-    // Фейкові дані для прикладу (потім підключимо API)
+    // Фейкові дані
     const [matches] = useState([
         { id: 1, team1: 'Реал', team2: 'Барселона', date: '2026-02-01 20:00', odds: { w1: 1.9, x: 3.5, w2: 2.1 } },
         { id: 2, team1: 'Арсенал', team2: 'Ман Сіті', date: '2026-02-02 21:45', odds: { w1: 2.5, x: 3.2, w2: 1.8 } },
@@ -10,58 +11,61 @@ const AdminMatchesPage = () => {
 
     return (
         <div>
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2>⚽ Управління матчами</h2>
-                <Button variant="success">+ Створити новий матч</Button>
+            {/* Заголовок і кнопка */}
+            <div className="matches-header-row">
+                <h2 className="matches-title"> Управління матчами</h2>
+                <Button className="btn-warning-pulse">+ Створити новий матч</Button>
             </div>
 
             <Row>
-                {/* ФОРМА СТВОРЕННЯ (Швидка) */}
+                {/* --- ФОРМА --- */}
                 <Col md={4}>
-                    <Card className="shadow-sm border-0 mb-4">
-                        <Card.Header className="bg-white fw-bold">Додати подію</Card.Header>
-                        <Card.Body>
+                    <div className="card-pulse">
+                        <div className="card-header">
+                            Додати подію
+                        </div>
+                        <div className="card-body">
                             <Form>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Команда 1 (Вдома)</Form.Label>
-                                    <Form.Control type="text" placeholder="Напр. Динамо" />
+                                    <Form.Control type="text" placeholder="Напр. Динамо" className="form-control-pulse" />
                                 </Form.Group>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Команда 2 (Гості)</Form.Label>
-                                    <Form.Control type="text" placeholder="Напр. Шахтар" />
+                                    <Form.Control type="text" placeholder="Напр. Шахтар" className="form-control-pulse" />
                                 </Form.Group>
                                 <Row>
                                     <Col>
                                         <Form.Label>П1</Form.Label>
-                                        <Form.Control type="number" step="0.01" />
+                                        <Form.Control type="number" step="0.01" className="form-control-pulse" />
                                     </Col>
                                     <Col>
                                         <Form.Label>X</Form.Label>
-                                        <Form.Control type="number" step="0.01" />
+                                        <Form.Control type="number" step="0.01" className="form-control-pulse" />
                                     </Col>
                                     <Col>
                                         <Form.Label>П2</Form.Label>
-                                        <Form.Control type="number" step="0.01" />
+                                        <Form.Control type="number" step="0.01" className="form-control-pulse" />
                                     </Col>
                                 </Row>
-                                <Button variant="primary" className="w-100 mt-3">Зберегти</Button>
+                                <Button className="btn-warning-pulse w-100 mt-4">Зберегти</Button>
                             </Form>
-                        </Card.Body>
-                    </Card>
+                        </div>
+                    </div>
                 </Col>
 
-                {/* СПИСОК МАТЧІВ */}
+                {/* --- ТАБЛИЦЯ --- */}
                 <Col md={8}>
-                    <Card className="shadow-sm border-0">
-                        <Card.Body>
-                            <Table hover responsive>
-                                <thead className="bg-light">
+                    <div className="card-pulse">
+                        <div className="card-body p-0">
+                            <Table className="table-pulse" responsive>
+                                <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Дата</th>
                                     <th>Подія</th>
                                     <th>Коефіцієнти</th>
-                                    <th>Дії</th>
+                                    <th className="text-end pe-4">Дії</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -69,22 +73,30 @@ const AdminMatchesPage = () => {
                                     <tr key={m.id}>
                                         <td>{m.id}</td>
                                         <td>{m.date}</td>
-                                        <td className="fw-bold">{m.team1} - {m.team2}</td>
-                                        <td>
-                                            <Badge bg="warning" text="dark" className="me-1">{m.odds.w1}</Badge>
-                                            <Badge bg="secondary" className="me-1">{m.odds.x}</Badge>
-                                            <Badge bg="warning" text="dark">{m.odds.w2}</Badge>
+
+                                        {/* Клас для жовтого тексту команд */}
+                                        <td className="match-teams">
+                                            {m.team1} - {m.team2}
                                         </td>
+
+                                        {/* Класи для бейджів */}
                                         <td>
-                                            <Button variant="outline-primary" size="sm" className="me-2">✏️</Button>
-                                            <Button variant="outline-danger" size="sm">🗑️</Button>
+                                            <span className="odds-badge">{m.odds.w1}</span>
+                                            <span className="odds-badge draw">{m.odds.x}</span>
+                                            <span className="odds-badge">{m.odds.w2}</span>
+                                        </td>
+
+                                        {/* Кнопки дій */}
+                                        <td className="text-end pe-3">
+                                            <button className="action-icon-btn" title="Редагувати">✏️</button>
+                                            <button className="action-icon-btn" title="Видалити">🗑️</button>
                                         </td>
                                     </tr>
                                 ))}
                                 </tbody>
                             </Table>
-                        </Card.Body>
-                    </Card>
+                        </div>
+                    </div>
                 </Col>
             </Row>
         </div>
