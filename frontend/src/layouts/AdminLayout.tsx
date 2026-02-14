@@ -18,8 +18,8 @@ const AdminLayout = () => {
                     <Link to="/admin/sports" className={`admin-nav-link ${location.pathname.includes('/sports') ? 'active' : ''}`}>
                         Спорт і Ліги
                     </Link>
-                    <Link to="/admin/matches" className={`admin-nav-link ${location.pathname.includes('/matches') ? 'active' : ''}`}>
-                        Матчі
+                    <Link to="/admin/competitions" className={`admin-nav-link ${location.pathname.includes('/matches') ? 'active' : ''}`}>
+                        Змагання
                     </Link>
                     <Link to="/admin/promotions" className={`admin-nav-link ${location.pathname.includes('/promotions') ? 'active' : ''}`}>
                         Акції та Купони

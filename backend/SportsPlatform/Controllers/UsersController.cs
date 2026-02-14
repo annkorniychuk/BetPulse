@@ -8,9 +8,9 @@ using BCrypt.Net;
 
 namespace SportsPlatform.Controllers;
 
-[Route("api/profile")] 
+[Route("api/profile")]
 [ApiController]
-[Authorize] 
+[Authorize]
 public class UsersController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -19,7 +19,7 @@ public class UsersController : ControllerBase
     {
         _context = context;
     }
-    
+
     private int GetCurrentUserId()
     {
         return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -154,11 +154,53 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<List<User>>> GetAllUsers()
     {
         var users = await _context.Users
-            .Select(u => new { u.Id, u.Name, u.Email, u.Role }) 
+            .Select(u => new { u.Id, u.Name, u.Email, u.Role })
             .ToListAsync();
 
         return Ok(users);
     }
+
+
+// Адмінське оновлення користувача
+    [HttpPut("/api/users/{id}")]
+    // [Authorize(Roles = "Admin")] // Розкоментуй, коли налаштуєш ролі
+    public async Task<IActionResult> UpdateUserAsAdmin(int id, [FromBody] UpdateUserRequest request)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null) return NotFound("Користувача не знайдено");
+
+        // Оновлюємо ім'я
+        if (!string.IsNullOrWhiteSpace(request.Name))
+        {
+            user.Name = request.Name;
+        }
+
+        // Оновлюємо пошту (з перевіркою на унікальність)
+        if (!string.IsNullOrWhiteSpace(request.Email) && user.Email != request.Email)
+        {
+            var emailTaken = await _context.Users.AnyAsync(u => u.Email == request.Email && u.Id != id);
+            if (emailTaken) return BadRequest("Ця пошта вже зайнята");
+            user.Email = request.Email;
+        }
+
+        // Оновлюємо роль
+        if (!string.IsNullOrWhiteSpace(request.Role))
+        {
+            user.Role = request.Role;
+        }
+
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Користувача оновлено" });
+    }
+
+}
+
+
+public class UpdateUserRequest
+{
+    public string Name { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
 }
 
 public class UpdateNameRequest

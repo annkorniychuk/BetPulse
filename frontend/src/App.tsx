@@ -9,7 +9,7 @@ import SplashScreen from './components/SplashScreen';
 import HomePage from './pages/HomePage';
 import AdminLayout from './layouts/AdminLayout';
 import AdminUsersPage from './pages/AdminUsersPage';
-import AdminMatchesPage from './pages/AdminMatchesPage';
+import AdminCompetitionsPage from './pages/AdminCompetitionsPage.tsx';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from "./pages/LoginPage.tsx";
 import ProfilePage from './pages/ProfilePage';
@@ -37,7 +37,7 @@ function App() {
                     <Route index element={<Navigate to="sports" replace />} />
 
                     <Route path="users" element={<AdminUsersPage />} />
-                    <Route path="matches" element={<AdminMatchesPage />} />
+                    <Route path="competitions" element={<AdminCompetitionsPage />} />
                     <Route path="promotions" element={<AdminPromotionsPage />} />
                     <Route path="sports" element={<AdminSportsPage/>} />
                 </Route>
