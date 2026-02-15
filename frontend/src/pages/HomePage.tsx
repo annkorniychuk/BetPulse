@@ -1,16 +1,20 @@
 import type {FunctionComponent} from 'react';
 import './HomePage.css';
 import Carousel from "../components/Carousel";
-//import {Button, Nav} from "react-bootstrap";
 
 const HomePage: FunctionComponent = () => {
     return (
-        <div className="container">
-            <h1>Main Page</h1>
-            <Carousel></Carousel>
+        <div>
+            <div className="container-fluid p-0">
+                <h1></h1>
+                <Carousel />
+            </div>
+
+            <div className="container mt-4">
+
+            </div>
         </div>
     );
 };
 
-export default HomePage ;
-
+export default HomePage;
