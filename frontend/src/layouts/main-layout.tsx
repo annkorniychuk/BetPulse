@@ -2,17 +2,31 @@ import { Button } from 'react-bootstrap';
 import Frame3 from "../assets/Frame3.svg";
 import Sidebar from '../components/sidebar/SideBar.tsx';
 import '../styles/main_layout.css'
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 const MainLayout = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const isAuth = !!localStorage.getItem('token');
     const userRole = localStorage.getItem('userRole');
+
+    // Стан для пошуку
+    const [searchValue, setSearchValue] = useState('');
 
     useEffect(() => {
         console.log('Перехід на сторінку:', location.pathname);
     }, [location]);
+
+    // Обробник пошуку
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchValue.trim()) {
+            navigate(`/catalog?q=${encodeURIComponent(searchValue.trim())}`);
+        } else {
+            navigate('/catalog');
+        }
+    };
 
     return (
         <div className="main_container">
@@ -23,12 +37,28 @@ const MainLayout = () => {
                     </Link>
                 </div>
 
+                {/* --- БЛОК ПОШУКУ ПО ЦЕНТРУ --- */}
+                <form className="header-search-form" onSubmit={handleSearch}>
+                    <span className="header-search-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="#6c757d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M20.9999 21L16.6499 16.65" stroke="#6c757d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                    </span>
+                    <input
+                        type="text"
+                        className="header-search-input"
+                        placeholder="Пошук"
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e.target.value)}
+                    />
+                </form>
+
                 <div className="auth_buttons">
                     {!isAuth ? (
                         /* --- НЕ ЗАЛОГІНЕНИЙ --- */
                         <>
                             <Link to="/login">
-                                {/* Ця кнопка використовує твій стиль .btn-custom */}
                                 <Button variant="custom">Увійти</Button>
                             </Link>
                             <Link to="/register">
@@ -38,18 +68,13 @@ const MainLayout = () => {
                     ) : (
                         /* --- ЗАЛОГІНЕНИЙ --- */
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-
-                            {/* 👇 КНОПКА АДМІНКИ */}
                             {userRole === 'Admin' && (
                                 <Link to="/admin">
-                                    {/* Змінили на variant="custom", щоб стиль був такий самий, як у "Увійти" */}
                                     <Button variant="custom">
-                                         Адмін Панель
+                                        Адмін Панель
                                     </Button>
                                 </Link>
                             )}
-
-                            {/* КНОПКА ПРОФІЛЮ */}
                             <Link to="/profile">
                                 <Button className="btn-profile">Мій профіль</Button>
                             </Link>

@@ -1,0 +1,116 @@
+/* Основний контейнер (як main_container) */
+.catalog-container {
+    background-color: #101010;
+    min-height: 100vh;
+    padding-left: 95px !important;
+    padding-right: 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Заголовок сторінки */
+.catalog-title {
+    color: #ffffff;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding-left: 15px;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+/* Картка змагання (колір як у navbar) */
+.catalog-card {
+    background-color: #141414;
+    border: 1px solid #373737;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.catalog-card:hover {
+    border-color: #fee000;
+    box-shadow: 0 4px 15px rgba(254, 224, 0, 0.15);
+    transform: translateY(-3px);
+}
+
+.catalog-card-title {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+/* Кнопки фільтрів (Всі, Спорт тощо) */
+.btn-filter {
+    background-color: #141414;
+    color: #ffffff;
+    border: 1px solid #373737;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-filter:hover {
+    background-color: #212529;
+    color: #ffffff;
+}
+
+/* Активний фільтр як btn-warning */
+.btn-filter.active {
+    background-color: #fee000;
+    color: #000000;
+    border-color: #fee000;
+}
+
+/* Кнопка "Деталі" (Повністю копіює твою btn-custom) */
+.btn-catalog-details {
+    background: linear-gradient(179.71deg, #fff, #e6e7e8);
+    color: #000000 !important;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-catalog-details:hover {
+    background: #d1d1d1;
+    color: #000000 !important;
+}
+
+/* Кнопка "Улюблене" (Сердечко) */
+.btn-catalog-favorite {
+    background-color: #141414;
+    color: #ff4d4d; /* Червоне для сердечка */
+    border: 1px solid #373737;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-catalog-favorite:hover {
+    background-color: #212529;
+    border-color: #ff4d4d;
+}
+
+/* Повідомлення про відсутність результатів */
+.catalog-empty-msg {
+    color: #6c757d;
+    text-align: center;
+    margin-top: 50px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Збільшені бейджі для країни та виду спорту */
+.catalog-badge {
+    font-size: 14px !important;
+    padding: 6px 12px !important;
+    font-weight: 600;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}

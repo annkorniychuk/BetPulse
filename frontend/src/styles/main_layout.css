@@ -75,3 +75,43 @@ html, body, #root {
     color: #000000 !important;
 
 }
+
+/* --- СТИЛІ ДЛЯ ПОШУКУ В ШАПЦІ --- */
+.header-search-form {
+    flex: 1;
+    max-width: 500px;
+    margin: 0 40px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.header-search-icon {
+    position: absolute;
+    left: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none; /* Щоб клік проходив крізь іконку на інпут */
+}
+
+.header-search-input {
+    width: 100%;
+    background-color: #212529;
+    border: 1px solid #3a414b;
+    color: #fff;
+    border-radius: 6px;
+    padding: 10px 15px 10px 45px; /* Зліва більше місця під іконку */
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.header-search-input::placeholder {
+    color: #6c757d;
+}
+
+.header-search-input:focus {
+    border-color: #fee000; /* Жовта обводка при кліку */
+}

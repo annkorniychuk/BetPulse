@@ -15,6 +15,7 @@ import LoginPage from "./pages/LoginPage.tsx";
 import ProfilePage from './pages/ProfilePage';
 import AdminPromotionsPage from './pages/AdminPromotionsPage';
 import AdminSportsPage from './pages/AdminSportsPage';
+import SportsCatalogPage from './pages/SportsCatalogPage';
 
 function App() {
     const [isLoading, setIsLoading] = useState(true);
@@ -30,10 +31,10 @@ function App() {
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/catalog" element={<SportsCatalogPage />} />
                 </Route>
 
                 <Route path="/admin" element={<AdminLayout />}>
-                    {/* 👇 Якщо просто /admin -> кидаємо на Спорт (бо дашборда нема) */}
                     <Route index element={<Navigate to="sports" replace />} />
 
                     <Route path="users" element={<AdminUsersPage />} />
