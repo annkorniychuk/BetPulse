@@ -1,19 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,600&display=swap');
 
 html, body, #root {
-    height: 100%;
+    height: 100vh; /* Фіксуємо під розмір екрану */
     margin: 0;
-    overflow: hidden;
+    overflow: hidden; /* 🔪 Вбиваємо зовнішній (другий) скрол браузера */
 }
 
 .home-page-container {
     position: relative;
 }
-.main_container{
+
+.main_container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100vh; /* Займає всю висоту */
     background-color: #000;
+    overflow-y: auto; /* ✅ Вмикаємо правильний внутрішній скрол тільки для контенту */
+    overflow-x: hidden; /* Ховаємо нижній скрол (горизонтальний) */
 }
 
 .navbar {
@@ -114,4 +117,28 @@ html, body, #root {
 
 .header-search-input:focus {
     border-color: #fee000; /* Жовта обводка при кліку */
+}
+
+/* 1. Для Chrome, Edge, Safari (Webkit) */
+::-webkit-scrollbar {
+    width: 8px; /* Робимо його тоненьким */
+}
+
+::-webkit-scrollbar-track {
+    background: #141414; /* Темний фон доріжки (як твоя шапка) */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #373737; /* Сірий колір самого повзунка */
+    border-radius: 10px; /* Закруглені краї, щоб було стильно */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #fee000; /* При наведенні мишкою стає фірмовим жовтим! 🔥 */
+}
+
+/* 2. Для Firefox (він не розуміє Webkit, у нього свої правила) */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #373737 #141414;
 }

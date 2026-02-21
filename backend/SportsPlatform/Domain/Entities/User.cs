@@ -7,6 +7,7 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty; // Додано для профілю
     public string Role { get; set; } = "User"; // "User" або "Admin"
+    public decimal Balance { get; set; } = 10000m;
 
     // Зв'язки
     public List<Favorite> Favorites { get; set; } = new();

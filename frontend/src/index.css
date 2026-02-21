@@ -1,92 +1,13 @@
-/* index.css — глобальні стилі з дефолтним скролом */
-
-/* Скидання відступів та бордер-бокс */
+/* В index.css має залишитися тільки це: */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Базові стилі для сторінки */
 html, body, #root {
-    height: auto;          /* Контент може рости більше за вікно */
-    min-height: 100%;      /* root не менше висоти вікна */
-    overflow-y: auto;      /* вертикальний скрол */
+    /* ВИДАЛИ ЗВІДСИ height та min-height */
     font-family: sans-serif;
-    background-color: #111; /* темний фон, під твій дизайн */
-    color: #fff;
-    line-height: normal;
-}
-
-.home-page {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    padding: 20px;
-}
-
-.container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.home-page .carousel-section {
-    margin-bottom: 30px;
-}
-
-.quick-categories {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.category-btn,
-.league-btn {
-    background-color: #1a1a1a;
-    color: #fff;
-    border-radius: 6px;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.2s;
-}
-
-.category-btn:hover,
-.league-btn:hover {
-    background-color: #333;
-}
-
-.popular-leagues {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.popular-games .game-card {
-    background-color: #222;
-    color: #fff;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 6px;
-}
-
-.games-grid .grid-section {
-    margin-top: 30px;
-}
-
-.grid-cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.grid-cards .game-card {
-    flex: 1 1 200px;
-    background-color: #222;
-    padding: 10px;
-    border-radius: 6px;
+    background-color: #111;
     color: #fff;
 }

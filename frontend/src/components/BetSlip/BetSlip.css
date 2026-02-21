@@ -1,0 +1,100 @@
+.bet-slip-panel {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 380px; /* Зробили купон ширшим (було 320px) */
+    background-color: #141414;
+    border: 1px solid #373737;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+}
+
+.bet-slip-header {
+    background-color: #fee000;
+    color: #000;
+    padding: 15px 20px; /* Збільшили відступи */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 18px; /* Збільшили заголовок */
+}
+
+.btn-close-slip {
+    background: none;
+    border: none;
+    color: #000;
+    font-size: 28px; /* Збільшили хрестик закриття */
+    line-height: 1;
+    cursor: pointer;
+}
+
+.bet-slip-body {
+    padding: 20px;
+    color: #fff;
+}
+
+.bet-slip-teams {
+    font-size: 16px; /* Збільшили назви команд (було 13px) */
+    color: #aeb5bc;
+    margin-bottom: 15px;
+}
+
+.bet-slip-selection {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px; /* Збільшили текст вибору */
+    font-weight: 600;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #373737;
+    padding-bottom: 15px;
+}
+
+.bet-slip-odds {
+    color: #fee000;
+    font-size: 20px; /* Зробили сам коефіцієнт ще більшим */
+}
+
+.bet-slip-input {
+    width: 100%;
+    background-color: #212529;
+    border: 1px solid #3a414b;
+    color: #fff;
+    border-radius: 6px;
+    padding: 12px 15px;
+    font-size: 16px; /* Збільшили шрифт у полі вводу суми */
+    margin-bottom: 20px;
+    outline: none;
+}
+
+.bet-slip-input:focus {
+    border-color: #fee000;
+}
+
+.bet-slip-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 16px; /* Збільшили текст виграшу */
+}
+
+.btn-place-bet {
+    width: 100%;
+    background: linear-gradient(179.71deg, #fff, #e6e7e8);
+    color: #000;
+    border: none;
+    padding: 14px; /* Зробили кнопку вищою */
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 16px; /* Збільшили текст на кнопці */
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-place-bet:hover {
+    background: #d1d1d1;
+}

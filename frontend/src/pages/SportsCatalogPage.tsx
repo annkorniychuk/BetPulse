@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Row, Col, Card, Button, Badge } from 'react-bootstrap';
+import { Row, Col, Card, Button } from 'react-bootstrap';
 import { AxiosError } from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -50,15 +50,12 @@ const SportsCatalogPage = () => {
     const handleAddFavorite = async (id: number) => {
         try {
             await api.post(`/profile/favorites/${id}`);
-            // Замість alert - красивий зелений тост
             toast.success('Додано в улюблене! ❤️');
         } catch (error) {
             const err = error as AxiosError;
             if (err.response?.status === 401) {
-                // Червоний тост для помилки авторизації
                 toast.error('Будь ласка, авторизуйтесь, щоб додавати в улюблене.');
             } else if (err.response?.status === 400) {
-                // Жовтий тост (warning), якщо вже є в списку
                 toast.warning('Це змагання вже у вашому списку!');
             } else {
                 toast.error('Помилка при додаванні');
@@ -111,8 +108,13 @@ const SportsCatalogPage = () => {
                             <Card className="catalog-card">
                                 <Card.Body className="d-flex flex-column">
                                     <div className="d-flex justify-content-between align-items-start mb-3">
-                                        <Badge bg="secondary" className="catalog-badge">{c.sport?.name}</Badge>
-                                        <Badge bg="dark" text="light" className="catalog-badge">{c.country}</Badge>
+                                        {/* Замінили Bootstrap Badge на span з нашими класами */}
+                                        <span className="catalog-badge catalog-badge-sport">
+                                            {sports.find(s => s.id === c.sportId)?.name || 'Спорт'}
+                                        </span>
+                                        <span className="catalog-badge catalog-badge-country">
+                                            {c.country}
+                                        </span>
                                     </div>
                                     <Card.Title className="catalog-card-title">
                                         {c.name}

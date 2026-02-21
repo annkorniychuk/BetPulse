@@ -107,10 +107,24 @@
 }
 
 /* Збільшені бейджі для країни та виду спорту */
+/* Базові стилі для всіх бейджів */
 .catalog-badge {
     font-size: 14px !important;
     padding: 6px 12px !important;
     font-weight: 600;
     border-radius: 6px;
     letter-spacing: 0.5px;
+}
+
+/* Бейдж для ВИДУ СПОРТУ (Жовтий) */
+.catalog-badge-sport {
+    background-color: #fee000 !important;
+    color: #000000 !important;
+}
+
+/* Бейдж для КРАЇНИ (Темно-сірий) */
+.catalog-badge-country {
+    background-color: #212529 !important;
+    color: #ffffff !important;
+    border: 1px solid #373737;
 }

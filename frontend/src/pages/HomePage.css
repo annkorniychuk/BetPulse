@@ -9,7 +9,6 @@
 html, body, #root {
     height: auto;
     min-height: 100%;
-    overflow-y: auto;
     font-family: 'Poppins', sans-serif;
     background-color: #111;
     color: #fff;

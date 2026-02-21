@@ -38,7 +38,8 @@ public class UsersController : ControllerBase
         {
             user.Id,
             user.Name,
-            user.Email
+            user.Email,
+            user.Balance
         });
     }
 
