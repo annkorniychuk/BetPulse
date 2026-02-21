@@ -42,7 +42,7 @@ public class AuthController : ControllerBase
             Email = request.Email,
             PasswordHash = passwordHash,
             Name = generatedName,
-            Role = "User" // За замовчуванням
+            Role = "User" 
         };
 
         _context.Users.Add(user);
