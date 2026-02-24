@@ -10,15 +10,12 @@ const MainLayout = () => {
     const navigate = useNavigate();
     const isAuth = !!localStorage.getItem('token');
     const userRole = localStorage.getItem('userRole');
-
-    // Стан для пошуку
     const [searchValue, setSearchValue] = useState('');
 
     useEffect(() => {
         console.log('Перехід на сторінку:', location.pathname);
     }, [location]);
 
-    // Обробник пошуку
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (searchValue.trim()) {
@@ -36,8 +33,7 @@ const MainLayout = () => {
                         <img src={Frame3} alt="Frame" />
                     </Link>
                 </div>
-
-                {/* --- БЛОК ПОШУКУ ПО ЦЕНТРУ --- */}
+                {/*тут пошук*/}
                 <form className="header-search-form" onSubmit={handleSearch}>
                     <span className="header-search-icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -56,7 +52,6 @@ const MainLayout = () => {
 
                 <div className="auth_buttons">
                     {!isAuth ? (
-                        /* --- НЕ ЗАЛОГІНЕНИЙ --- */
                         <>
                             <Link to="/login">
                                 <Button variant="custom">Увійти</Button>
@@ -66,7 +61,6 @@ const MainLayout = () => {
                             </Link>
                         </>
                     ) : (
-                        /* --- ЗАЛОГІНЕНИЙ --- */
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             {userRole === 'Admin' && (
                                 <Link to="/admin">
