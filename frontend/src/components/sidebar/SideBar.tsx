@@ -36,6 +36,7 @@ interface SubMenuItem {
     id?: number;
     count?: number;
     countryName?: string;
+    sportId?: number;
 }
 
 interface MenuItem {
@@ -45,6 +46,7 @@ interface MenuItem {
     subMenu?: SubMenuItem[];
     path?: string;
     isSport?: boolean;
+    sportId?: number; // 👈 ДОДАЛИ: Тепер головна категорія теж знає свій ID
 }
 
 const Sidebar: FunctionComponent = () => {
@@ -70,9 +72,11 @@ const Sidebar: FunctionComponent = () => {
                 ];
 
                 const response = await api.get<SportDto[]>('/sports');
-                const sportsData = response.data;
 
-                const dynamicSports: MenuItem[] = sportsData.map((sport: SportDto) => {
+                // Відфільтровуємо баговий спорт "змагання"
+                const validSports = response.data.filter(sport => sport.name.toLowerCase() !== 'змагання');
+
+                const dynamicSports: MenuItem[] = validSports.map((sport: SportDto) => {
                     const countryCounts: { [key: string]: number } = {};
 
                     sport.competitions.forEach((comp) => {
@@ -86,7 +90,8 @@ const Sidebar: FunctionComponent = () => {
                     const subMenu: SubMenuItem[] = Object.keys(countryCounts).map((countryName) => ({
                         label: countryName,
                         count: countryCounts[countryName],
-                        countryName: countryName
+                        countryName: countryName,
+                        sportId: sport.id
                     }));
 
                     return {
@@ -94,12 +99,13 @@ const Sidebar: FunctionComponent = () => {
                         label: sport.name,
                         icon2: arrowIcon,
                         isSport: true,
-                        subMenu: subMenu
+                        subMenu: subMenu,
+                        sportId: sport.id // 👈 Прив'язали ID до самої кнопки спорту
                     };
                 });
 
                 const staticBottom: MenuItem[] = [
-                    { icon: catalogIcon, label: 'Каталог ігр' },
+                    { icon: catalogIcon, label: 'Каталог ігр', path: '/catalog' }, // 👈 Додали перехід і на каталог
                     { icon: cardsIcon, label: 'Карти' },
                     {
                         icon: liveCasinoIcon,
@@ -125,13 +131,15 @@ const Sidebar: FunctionComponent = () => {
     const handleItemClick = (item: MenuItem) => {
         if (item.path) {
             navigate(item.path);
+        } else if (item.isSport && item.sportId) {
+            // 👈 ДОДАЛИ: Якщо це спорт, робимо перехід на каталог з фільтром цього спорту
+            navigate(`/catalog?sportId=${item.sportId}`);
         }
     };
 
     const handleSubItemClick = (sub: SubMenuItem) => {
-        if (sub.countryName) {
-            // Тут поки лог, бо сторінки країни ще нема
-            console.log(sub.countryName);
+        if (sub.countryName && sub.sportId) {
+            navigate(`/catalog?sportId=${sub.sportId}&country=${sub.countryName}`);
         } else if (sub.id) {
             navigate(`/competition/${sub.id}`);
         }
@@ -167,7 +175,8 @@ const Sidebar: FunctionComponent = () => {
                                         onClick={() => handleSubItemClick(sub)}
                                     >
                                         <span>{sub.label}</span>
-                                        {sub.count !== undefined && sub.count > 0 && (
+                                        {/* 👇 ПРИБРАЛИ УМОВУ sub.count > 0, тепер нулі будуть показуватися! */}
+                                        {sub.count !== undefined && (
                                             <span className="submenu-count">{sub.count}</span>
                                         )}
                                     </div>

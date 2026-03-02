@@ -25,11 +25,22 @@ const SportsCatalogPage = () => {
     const [sports, setSports] = useState<Sport[]>([]);
     const [selectedSport, setSelectedSport] = useState<number | null>(null);
 
-    const [searchParams] = useSearchParams();
+    // 👈 ДІСТАЄМО УСІ ПАРАМЕТРИ З ПОСИЛАННЯ
+    const [searchParams, setSearchParams] = useSearchParams();
     const searchQuery = searchParams.get('q') || '';
+    const searchCountry = searchParams.get('country');
+    const searchSportId = searchParams.get('sportId');
 
-    // Додали хук для навігації
     const navigate = useNavigate();
+
+    // 👈 СИНХРОНІЗУЄМО СТАН КНОПОК З URL
+    useEffect(() => {
+        if (searchSportId) {
+            setSelectedSport(Number(searchSportId));
+        } else {
+            setSelectedSport(null);
+        }
+    }, [searchSportId]);
 
     useEffect(() => {
         api.get<Competition[]>('/competitions')
@@ -41,10 +52,12 @@ const SportsCatalogPage = () => {
             .catch(e => console.error(e));
     }, []);
 
+    // 👈 ДОДАЛИ ФІЛЬТРАЦІЮ ЗА КРАЇНОЮ
     const filteredCompetitions = competitions.filter(c => {
         const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesSport = selectedSport ? c.sportId === selectedSport : true;
-        return matchesSearch && matchesSport;
+        const matchesCountry = searchCountry ? c.country === searchCountry : true;
+        return matchesSearch && matchesSport && matchesCountry;
     });
 
     const handleAddFavorite = async (id: number) => {
@@ -64,28 +77,38 @@ const SportsCatalogPage = () => {
     };
 
     const handleViewDetails = (id: number) => {
-        // Замість alert реально переходимо на нову сторінку
         navigate(`/competition/${id}`);
+    };
+
+    // Обробник кліку по кнопці "Всі"
+    const handleClearFilters = () => {
+        setSelectedSport(null);
+        setSearchParams({}); // Очищаємо URL повністю
+    };
+
+    // Обробник кліку по спорту
+    const handleSelectSport = (sportId: number) => {
+        setSelectedSport(sportId);
+        searchParams.set('sportId', sportId.toString());
+        searchParams.delete('country'); // Скидаємо країну, бо ми змінили спорт
+        setSearchParams(searchParams);
     };
 
     return (
         <div className="container-fluid px-4 py-4 catalog-container">
-            {/* Контейнер для відображення повідомлень */}
-            <ToastContainer
-                position="bottom-right"
-                autoClose={3000}
-                theme="dark"
-            />
+            <ToastContainer position="bottom-right" autoClose={3000} theme="dark" />
 
             <h2 className="catalog-title">
+                {/* 👈 ВИВОДИМО КРАЇНУ В ЗАГОЛОВОК, ЯКЩО ВОНА ВИБРАНА */}
                 {searchQuery ? `РЕЗУЛЬТАТИ ПОШУКУ: "${searchQuery}"` : 'СПОРТИВНІ ПОДІЇ'}
+                {searchCountry && !searchQuery && ` — ${searchCountry}`}
             </h2>
 
             <Row className="mb-4">
                 <Col className="d-flex gap-2 flex-wrap">
                     <Button
                         className={`btn-filter ${selectedSport === null ? 'active' : ''}`}
-                        onClick={() => setSelectedSport(null)}
+                        onClick={handleClearFilters}
                     >
                         Всі
                     </Button>
@@ -93,7 +116,7 @@ const SportsCatalogPage = () => {
                         <Button
                             key={sport.id}
                             className={`btn-filter ${selectedSport === sport.id ? 'active' : ''}`}
-                            onClick={() => setSelectedSport(sport.id)}
+                            onClick={() => handleSelectSport(sport.id)}
                         >
                             {sport.name}
                         </Button>
@@ -108,7 +131,6 @@ const SportsCatalogPage = () => {
                             <Card className="catalog-card">
                                 <Card.Body className="d-flex flex-column">
                                     <div className="d-flex justify-content-between align-items-start mb-3">
-                                        {/* Замінили Bootstrap Badge на span з нашими класами */}
                                         <span className="catalog-badge catalog-badge-sport">
                                             {sports.find(s => s.id === c.sportId)?.name || 'Спорт'}
                                         </span>
@@ -141,7 +163,7 @@ const SportsCatalogPage = () => {
                     ))
                 ) : (
                     <h5 className="catalog-empty-msg">
-                        За запитом "{searchQuery}" нічого не знайдено
+                        Нічого не знайдено {searchCountry && `в країні ${searchCountry}`}
                     </h5>
                 )}
             </Row>

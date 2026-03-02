@@ -181,6 +181,7 @@
     text-align: left;
     font-size: 16px;
     color: #fff;
+    cursor: pointer;
 }
 
 .submenu-item:hover {
