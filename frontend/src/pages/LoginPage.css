@@ -137,3 +137,131 @@
     text-decoration: underline;
     margin-left: 5px;
 }
+
+/* --- Замість інлайн-стилів для старих елементів --- */
+.login-form-full {
+    width: 100%;
+}
+
+.password-eye {
+    cursor: pointer;
+}
+
+/* --- СТИЛІ МОДАЛКИ "ЗАБУЛИ ПАРОЛЬ" --- */
+.forgot-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.forgot-modal-card {
+    background-color: #1a1a1a; /* Темний фон картки */
+    width: 100%;
+    max-width: 450px;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.bp-logo-modal {
+    font-size: 32px;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: -2px;
+}
+
+.logo-white {
+    color: #fff;
+}
+
+.logo-yellow {
+    color: #fee000;
+}
+
+.modal-close-icon {
+    color: #888;
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-close-icon:hover {
+    color: #fff;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.modal-title {
+    color: #fee000;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.modal-subtitle {
+    color: #aeb5bc;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+.modal-input {
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: #fff; /* Білий інпут як на дизайні */
+    color: #000;
+}
+
+.modal-input-group {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.modal-text-link {
+    color: #aeb5bc;
+    font-size: 12px;
+    margin-top: 15px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.modal-text-link:hover {
+    color: #fff;
+}
+
+/* --- Крок 4: Успіх --- */
+.success-circle {
+    width: 60px;
+    height: 60px;
+    background-color: #fee000;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.success-text {
+    margin-bottom: 30px;
+}

@@ -25,7 +25,7 @@ const SportsCatalogPage = () => {
     const [sports, setSports] = useState<Sport[]>([]);
     const [selectedSport, setSelectedSport] = useState<number | null>(null);
 
-    // 👈 ДІСТАЄМО УСІ ПАРАМЕТРИ З ПОСИЛАННЯ
+    // ДІСТАЄМО УСІ ПАРАМЕТРИ З ПОСИЛАННЯ
     const [searchParams, setSearchParams] = useSearchParams();
     const searchQuery = searchParams.get('q') || '';
     const searchCountry = searchParams.get('country');
@@ -33,7 +33,7 @@ const SportsCatalogPage = () => {
 
     const navigate = useNavigate();
 
-    // 👈 СИНХРОНІЗУЄМО СТАН КНОПОК З URL
+    // СИНХРОНІЗУЄМО СТАН КНОПОК З URL
     useEffect(() => {
         if (searchSportId) {
             setSelectedSport(Number(searchSportId));
@@ -52,11 +52,19 @@ const SportsCatalogPage = () => {
             .catch(e => console.error(e));
     }, []);
 
-    // 👈 ДОДАЛИ ФІЛЬТРАЦІЮ ЗА КРАЇНОЮ
+    // 👇 ОНОВЛЕНА ЛОГІКА ФІЛЬТРАЦІЇ (Пошук по назві змагання АБО спорту)
     const filteredCompetitions = competitions.filter(c => {
-        const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const query = searchQuery.toLowerCase();
+
+        // Знаходимо ім'я спорту для поточної картки (або пустий рядок, якщо не знайдено)
+        const sportName = sports.find(s => s.id === c.sportId)?.name.toLowerCase() || '';
+
+        // Шукаємо співпадіння АБО в назві ліги, АБО в назві спорту
+        const matchesSearch = c.name.toLowerCase().includes(query) || sportName.includes(query);
+
         const matchesSport = selectedSport ? c.sportId === selectedSport : true;
         const matchesCountry = searchCountry ? c.country === searchCountry : true;
+
         return matchesSearch && matchesSport && matchesCountry;
     });
 
@@ -99,7 +107,7 @@ const SportsCatalogPage = () => {
             <ToastContainer position="bottom-right" autoClose={3000} theme="dark" />
 
             <h2 className="catalog-title">
-                {/* 👈 ВИВОДИМО КРАЇНУ В ЗАГОЛОВОК, ЯКЩО ВОНА ВИБРАНА */}
+                {/* ВИВОДИМО КРАЇНУ В ЗАГОЛОВОК, ЯКЩО ВОНА ВИБРАНА */}
                 {searchQuery ? `РЕЗУЛЬТАТИ ПОШУКУ: "${searchQuery}"` : 'СПОРТИВНІ ПОДІЇ'}
                 {searchCountry && !searchQuery && ` — ${searchCountry}`}
             </h2>

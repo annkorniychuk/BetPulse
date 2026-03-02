@@ -105,7 +105,7 @@ const Sidebar: FunctionComponent = () => {
                 });
 
                 const staticBottom: MenuItem[] = [
-                    { icon: catalogIcon, label: 'Каталог ігр', path: '/catalog' }, // 👈 Додали перехід і на каталог
+                    { icon: catalogIcon, label: 'Спортивні події', path: '/catalog' }, // 👈 Додали перехід і на каталог
                     { icon: cardsIcon, label: 'Карти' },
                     {
                         icon: liveCasinoIcon,
