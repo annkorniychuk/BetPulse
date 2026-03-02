@@ -87,3 +87,117 @@ html, body, #root {
     border-radius: 6px;
     color: #fff;
 }
+
+.game-card {
+    background-color: #1e1e1e;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 15px;
+    color: white;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.live-badge {
+    background: red;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.game-time {
+    background: #2c2c2c;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.game-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.teams {
+    display: flex;
+    flex-direction: column;
+}
+
+.odds {
+    display: flex;
+    gap: 8px;
+}
+
+.odd-btn {
+    background: #2c2c2c;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+}
+.popular-games {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.home-page {
+    background: #101010;
+    min-height: 100vh;
+}
+
+.home-content.container {
+    max-width: 1840px !important;
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+}
+
+.home-wide {
+    max-width: 1840px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+.quick-categories {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.popular-leagues {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.popular-games {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+@media (max-width: 1400px) {
+    .popular-games {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .popular-leagues {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .quick-categories {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .popular-games,
+    .popular-leagues,
+    .quick-categories {
+        grid-template-columns: 1fr;
+    }
+}
