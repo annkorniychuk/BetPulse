@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Додав Link
+import { useNavigate, Link } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import api from '../api/axiosConfig.ts';
 import '../styles/ProfilePage.css';
@@ -11,11 +11,23 @@ interface UserProfile {
     balance?: number;
 }
 
+type Bet = {
+    id: number;
+    matchId: number;
+    choice: string;
+    amount: number;
+    odd: number;
+    potentialWin: number;
+    status: string;
+    betDate: string;
+};
+
 const ProfilePage = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [bets, setBets] = useState<Bet[]>([]);
 
     const [showNameModal, setShowNameModal] = useState(false);
     const [newName, setNewName] = useState('');
@@ -42,6 +54,7 @@ const ProfilePage = () => {
         };
 
         fetchProfile();
+        api.get('/bets').then(r => setBets(r.data)).catch(console.error);
     }, [navigate]);
 
     const handleLogout = () => {
@@ -51,14 +64,10 @@ const ProfilePage = () => {
 
     const handleUpdateName = async () => {
         if (!newName.trim()) return;
-
         setIsSaving(true);
         try {
             await api.put('/profile/update-name', { name: newName });
-
-            if (user) {
-                setUser({ ...user, name: newName });
-            }
+            if (user) setUser({ ...user, name: newName });
             setShowNameModal(false);
         } catch (err) {
             console.error(err);
@@ -108,11 +117,36 @@ const ProfilePage = () => {
                     <input className="form-input" value={user?.email || ''} readOnly />
                 </div>
 
+                <div className="bets-history">
+                    <h3 className="bets-title">Історія ставок</h3>
+                    {bets.length === 0 ? (
+                        <p className="bets-empty">Ставок ще немає</p>
+                    ) : (
+                        <div className="bets-list">
+                            {bets.map((b) => (
+                                <div key={b.id} className="bet-item">
+                                    <div className="bet-row">
+                                        <span className="bet-choice">{b.choice}</span>
+                                        <span className={`bet-status bet-status--${b.status.toLowerCase()}`}>{b.status}</span>
+                                    </div>
+                                    <div className="bet-row">
+                                        <span>Ставка: <b>{b.amount} ₴</b></span>
+                                        <span>Виграш: <b>{b.potentialWin} ₴</b></span>
+                                        <span>Коеф: <b>{b.odd}</b></span>
+                                    </div>
+                                    <div className="bet-date">
+                                        {new Date(b.betDate).toLocaleString("uk-UA")}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
                 <div className="profile-actions">
                     <button className="btn-edit" onClick={() => setShowNameModal(true)}>
                         ✎ Змінити ім'я
                     </button>
-
                     <Link to="/" className="btn-home">⬅ На головну</Link>
                     <button className="btn-logout" onClick={handleLogout}>Вийти</button>
                 </div>

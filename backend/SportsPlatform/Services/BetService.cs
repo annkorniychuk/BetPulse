@@ -47,4 +47,13 @@ public class BetService
 
         return bet;
     }
+
+    public async Task<List<Bet>> GetUserBetsAsync(int userId)
+    {
+        return await _context.Bets
+            .Include(b => b.Match)
+            .Where(b => b.UserId == userId)
+            .OrderByDescending(b => b.BetDate)
+            .ToListAsync();
+    }
 }

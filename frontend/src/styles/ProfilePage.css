@@ -226,3 +226,16 @@
     cursor: pointer;
 }
 .btn-cancel:hover { background-color: #2a2a2a; color: #fff; }
+
+.bets-history { margin-top: 24px; width: 100%; }
+.bets-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.bets-empty { color: #888; font-size: 14px; }
+.bets-list { display: flex; flex-direction: column; gap: 10px; }
+.bet-item { background: #1a1a1a; border-radius: 8px; padding: 12px; font-size: 13px; }
+.bet-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.bet-choice { font-weight: 600; }
+.bet-status { font-size: 12px; padding: 2px 8px; border-radius: 4px; }
+.bet-status--pending { background: #856404; color: #fff3cd; }
+.bet-status--won { background: #155724; color: #d4edda; }
+.bet-status--lost { background: #721c24; color: #f8d7da; }
+.bet-date { color: #888; font-size: 11px; margin-top: 4px; }

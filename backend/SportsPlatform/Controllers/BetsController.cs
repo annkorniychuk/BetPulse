@@ -34,6 +34,14 @@ public class BetsController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetMyBets()
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var bets = await _service.GetUserBetsAsync(userId);
+        return Ok(bets);
+    }
 }
 
 public class CreateBetRequest
