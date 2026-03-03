@@ -1,9 +1,28 @@
+import { useNavigate } from "react-router-dom";
 import "../styles/PopularLeagues.css";
 
-const leaguesRow1 = ["Чемпіонів УЄФА", "Європи УЄФА", "Прем’єр Ліга", "Ла Ліга"];
-const leaguesRow2 = ["Серія A", "Бундесліга", "Ліга 1", "Кубок Іспанії"];
+type League = {
+    label: string;
+    id: number;
+};
+
+const leaguesRow1: League[] = [
+    { label: "Чемпіонів УЄФА", id: 3 },
+    { label: "Прем'єр Ліга", id: 2 },
+    { label: "Ла Ліга", id: 6 },
+    { label: "Серія A", id: 7 },
+];
+
+const leaguesRow2: League[] = [
+    { label: "Бундесліга", id: 8 },
+    { label: "Ліга 1", id: 9 },
+    { label: "NBA", id: 4 },
+    { label: "UPL", id: 13 },
+];
 
 const PopularLeagues = () => {
+    const navigate = useNavigate();
+
     return (
         <section className="pl">
             <div className="pl__header">
@@ -12,15 +31,15 @@ const PopularLeagues = () => {
             <div className="pl__grid">
                 <div className="pl__row">
                     {leaguesRow1.map((x) => (
-                        <button key={x} className="pl__btn" type="button">
-                            <span className="pl__btnText">{x}</span>
+                        <button key={x.id} className="pl__btn" type="button" onClick={() => navigate(`/competition/${x.id}`)}>
+                            <span className="pl__btnText">{x.label}</span>
                         </button>
                     ))}
                 </div>
                 <div className="pl__row">
                     {leaguesRow2.map((x) => (
-                        <button key={x} className="pl__btn" type="button">
-                            <span className="pl__btnText">{x}</span>
+                        <button key={x.id} className="pl__btn" type="button" onClick={() => navigate(`/competition/${x.id}`)}>
+                            <span className="pl__btnText">{x.label}</span>
                         </button>
                     ))}
                 </div>

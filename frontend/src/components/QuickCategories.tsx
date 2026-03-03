@@ -12,10 +12,10 @@ type Category = {
 };
 
 const categories: Category[] = [
-    { label: "ВОЛЕЙБОЛ", route: "/catalog?sport=volleyball", icon: vIcon },
-    { label: "ФУТБОЛ", route: "/catalog?sport=football", icon: fIcon },
-    { label: "БАСКЕТБОЛ", route: "/catalog?sport=basketball", icon: bIcon },
-    { label: "ТЕНІС", route: "/catalog?sport=tennis", icon: tIcon },
+    { label: "ВОЛЕЙБОЛ", route: "/catalog?sport=volleyball&sportId=5", icon: vIcon },
+    { label: "ФУТБОЛ", route: "/catalog?sport=football&sportId=2", icon: fIcon },
+    { label: "БАСКЕТБОЛ", route: "/catalog?sport=basketball&sportId=3", icon: bIcon },
+    { label: "ТЕНІС", route: "/catalog?sport=tennis&sportId=4", icon: tIcon },
 ];
 
 const QuickCategories = () => {
