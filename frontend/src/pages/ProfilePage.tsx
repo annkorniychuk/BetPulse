@@ -33,7 +33,12 @@ const ProfilePage = () => {
     // Стейти для імені
     const [showNameModal, setShowNameModal] = useState(false);
     const [newName, setNewName] = useState('');
-    const [isSaving, setIsSaving] = useState(false);
+    const [isSavingName, setIsSavingName] = useState(false);
+
+    // Стейти для email
+    const [showEmailModal, setShowEmailModal] = useState(false);
+    const [newEmail, setNewEmail] = useState('');
+    const [isSavingEmail, setIsSavingEmail] = useState(false);
 
     // Стейти для пароля
     const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -48,6 +53,7 @@ const ProfilePage = () => {
                 const response = await api.get('/profile');
                 setUser(response.data);
                 setNewName(response.data.name);
+                setNewEmail(response.data.email);
             } catch (err) {
                 const axiosError = err as AxiosError;
                 if (axiosError.response && axiosError.response.status === 401) {
@@ -74,31 +80,53 @@ const ProfilePage = () => {
     // --- ЛОГІКА ЗМІНИ ІМЕНІ ---
     const handleUpdateName = async () => {
         if (!newName.trim()) return;
-        setIsSaving(true);
+        setIsSavingName(true);
         try {
             await api.put('/profile/update-name', { name: newName });
             if (user) setUser({ ...user, name: newName });
             setShowNameModal(false);
-            toast.success("Ім'я успішно змінено! ");
+            toast.success("Ім'я успішно змінено");
         } catch (err) {
             console.error(err);
-            toast.error("Не вдалося змінити ім'я ");
+            toast.error("Не вдалося змінити ім'я");
         } finally {
-            setIsSaving(false);
+            setIsSavingName(false);
+        }
+    };
+
+    // --- ЛОГІКА ЗМІНИ EMAIL ---
+    const handleUpdateEmail = async () => {
+        if (!newEmail.trim() || !newEmail.includes('@')) {
+            return toast.warning("Введіть коректний email");
+        }
+        if (newEmail === user?.email) {
+            return toast.warning("Новий email має відрізнятися від поточного");
+        }
+
+        setIsSavingEmail(true);
+        try {
+            await api.put('/profile/update-email', { email: newEmail });
+            if (user) setUser({ ...user, email: newEmail });
+            setShowEmailModal(false);
+            toast.success("Email успішно змінено");
+        } catch (err) {
+            console.error(err);
+            toast.error("Не вдалося змінити email. Можливо, він вже використовується.");
+        } finally {
+            setIsSavingEmail(false);
         }
     };
 
     // --- ЛОГІКА ЗМІНИ ПАРОЛЯ ---
     const handleUpdatePassword = async () => {
-        if (!oldPassword) return toast.warning("Введіть старий пароль ");
+        if (!oldPassword) return toast.warning("Введіть старий пароль");
 
-        // 👇 ДОДАЛИ ЦЮ ПЕРЕВІРКУ
         if (oldPassword === newPassword) {
             return toast.warning("Новий пароль має відрізнятися від старого");
         }
 
-        if (newPassword !== confirmNewPassword) return toast.warning("Нові паролі не співпадають! ");
-        if (newPassword.length < 6) return toast.warning("Мінімум 6 символів для нового паролю ");
+        if (newPassword !== confirmNewPassword) return toast.warning("Нові паролі не співпадають");
+        if (newPassword.length < 6) return toast.warning("Мінімум 6 символів для нового паролю");
 
         setIsChangingPwd(true);
         try {
@@ -107,7 +135,7 @@ const ProfilePage = () => {
                 newPassword: newPassword
             });
 
-            toast.success("Пароль успішно оновлено! 🎉");
+            toast.success("Пароль успішно оновлено");
             setShowPasswordModal(false);
             setOldPassword('');
             setNewPassword('');
@@ -190,8 +218,11 @@ const ProfilePage = () => {
                     <button className="btn-edit" onClick={() => setShowNameModal(true)}>
                         ✎ Змінити ім'я
                     </button>
+                    <button className="btn-edit" onClick={() => setShowEmailModal(true)}>
+                        ✎ Змінити email
+                    </button>
                     <button className="btn-edit" onClick={() => setShowPasswordModal(true)}>
-                        🔐 Змінити пароль
+                        ✎ Змінити пароль
                     </button>
                     <Link to="/" className="btn-home">⬅ На головну</Link>
                     <button className="btn-logout" onClick={handleLogout}>Вийти</button>
@@ -211,10 +242,37 @@ const ProfilePage = () => {
                             placeholder="Введіть нове ім'я"
                         />
                         <div className="modal-actions">
-                            <button className="btn-save" onClick={handleUpdateName} disabled={isSaving}>
-                                {isSaving ? 'Збереження...' : 'Зберегти'}
+                            <button className="btn-save" onClick={handleUpdateName} disabled={isSavingName}>
+                                {isSavingName ? 'Збереження...' : 'Зберегти'}
                             </button>
                             <button className="btn-cancel" onClick={() => setShowNameModal(false)}>
+                                Скасувати
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Модалка зміни email */}
+            {showEmailModal && (
+                <div className="modal-overlay">
+                    <div className="modal-card">
+                        <h3>Зміна email</h3>
+                        <input
+                            type="email"
+                            className="form-input mb-3"
+                            value={newEmail}
+                            onChange={(e) => setNewEmail(e.target.value)}
+                            placeholder="Введіть новий email"
+                        />
+                        <div className="modal-actions">
+                            <button className="btn-save" onClick={handleUpdateEmail} disabled={isSavingEmail}>
+                                {isSavingEmail ? 'Збереження...' : 'Зберегти'}
+                            </button>
+                            <button className="btn-cancel" onClick={() => {
+                                setShowEmailModal(false);
+                                setNewEmail(user?.email || ''); // Скидаємо на поточний при відміні
+                            }}>
                                 Скасувати
                             </button>
                         </div>
@@ -246,7 +304,7 @@ const ProfilePage = () => {
                             className="form-input mb-3"
                             value={confirmNewPassword}
                             onChange={(e) => setConfirmNewPassword(e.target.value)}
-                            placeholder="Підтвердіть новий пароль"
+                            placeholder="Підтвердження нового пароля"
                         />
                         <div className="modal-actions">
                             <button className="btn-save" onClick={handleUpdatePassword} disabled={isChangingPwd}>

@@ -70,7 +70,7 @@ public class UsersController : ControllerBase
         if (user == null) return NotFound();
 
         if (user.Email == request.Email)
-            return Ok("Введіть нову пошту");
+            return BadRequest("Введіть нову пошту");
 
         var emailTaken = await _context.Users.AnyAsync(u => u.Email == request.Email && u.Id != userId);
         if (emailTaken)
@@ -151,7 +151,7 @@ public class UsersController : ControllerBase
     // Отримати всіх користувачів
     [HttpGet("/api/users")]
     [AllowAnonymous]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<List<User>>> GetAllUsers()
     {
         var users = await _context.Users
@@ -164,7 +164,7 @@ public class UsersController : ControllerBase
 
 // Адмінське оновлення користувача
     [HttpPut("/api/users/{id}")]
-    // [Authorize(Roles = "Admin")] // Розкоментуй, коли налаштуєш ролі
+    [Authorize(Roles = "Admin")] 
     public async Task<IActionResult> UpdateUserAsAdmin(int id, [FromBody] UpdateUserRequest request)
     {
         var user = await _context.Users.FindAsync(id);
