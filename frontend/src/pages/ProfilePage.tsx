@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AxiosError } from 'axios';
-import api from '../api/axiosConfig.ts';
+import { toast } from 'react-toastify';
+import api from '../api/axiosConfig';
 import '../styles/ProfilePage.css';
 
 interface UserProfile {
@@ -29,9 +30,17 @@ const ProfilePage = () => {
     const [error, setError] = useState('');
     const [bets, setBets] = useState<Bet[]>([]);
 
+    // Стейти для імені
     const [showNameModal, setShowNameModal] = useState(false);
     const [newName, setNewName] = useState('');
     const [isSaving, setIsSaving] = useState(false);
+
+    // Стейти для пароля
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [isChangingPwd, setIsChangingPwd] = useState(false);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -62,6 +71,7 @@ const ProfilePage = () => {
         navigate('/');
     };
 
+    // --- ЛОГІКА ЗМІНИ ІМЕНІ ---
     const handleUpdateName = async () => {
         if (!newName.trim()) return;
         setIsSaving(true);
@@ -69,11 +79,44 @@ const ProfilePage = () => {
             await api.put('/profile/update-name', { name: newName });
             if (user) setUser({ ...user, name: newName });
             setShowNameModal(false);
+            toast.success("Ім'я успішно змінено! ");
         } catch (err) {
             console.error(err);
-            alert('Не вдалося змінити ім\'я');
+            toast.error("Не вдалося змінити ім'я ");
         } finally {
             setIsSaving(false);
+        }
+    };
+
+    // --- ЛОГІКА ЗМІНИ ПАРОЛЯ ---
+    const handleUpdatePassword = async () => {
+        if (!oldPassword) return toast.warning("Введіть старий пароль ");
+
+        // 👇 ДОДАЛИ ЦЮ ПЕРЕВІРКУ
+        if (oldPassword === newPassword) {
+            return toast.warning("Новий пароль має відрізнятися від старого");
+        }
+
+        if (newPassword !== confirmNewPassword) return toast.warning("Нові паролі не співпадають! ");
+        if (newPassword.length < 6) return toast.warning("Мінімум 6 символів для нового паролю ");
+
+        setIsChangingPwd(true);
+        try {
+            await api.put('/profile/change-password', {
+                oldPassword: oldPassword,
+                newPassword: newPassword
+            });
+
+            toast.success("Пароль успішно оновлено! 🎉");
+            setShowPasswordModal(false);
+            setOldPassword('');
+            setNewPassword('');
+            setConfirmNewPassword('');
+        } catch (err) {
+            console.error(err);
+            toast.error("Помилка! Перевірте правильність старого пароля");
+        } finally {
+            setIsChangingPwd(false);
         }
     };
 
@@ -122,7 +165,7 @@ const ProfilePage = () => {
                     {bets.length === 0 ? (
                         <p className="bets-empty">Ставок ще немає</p>
                     ) : (
-                        <div className="bets-list">
+                        <div className="bets-list scrollable-bets">
                             {bets.map((b) => (
                                 <div key={b.id} className="bet-item">
                                     <div className="bet-row">
@@ -147,18 +190,22 @@ const ProfilePage = () => {
                     <button className="btn-edit" onClick={() => setShowNameModal(true)}>
                         ✎ Змінити ім'я
                     </button>
+                    <button className="btn-edit" onClick={() => setShowPasswordModal(true)}>
+                        🔐 Змінити пароль
+                    </button>
                     <Link to="/" className="btn-home">⬅ На головну</Link>
                     <button className="btn-logout" onClick={handleLogout}>Вийти</button>
                 </div>
             </div>
 
+            {/* Модалка зміни імені */}
             {showNameModal && (
                 <div className="modal-overlay">
                     <div className="modal-card">
                         <h3>Зміна імені</h3>
                         <input
                             type="text"
-                            className="form-input"
+                            className="form-input mb-3"
                             value={newName}
                             onChange={(e) => setNewName(e.target.value)}
                             placeholder="Введіть нове ім'я"
@@ -168,6 +215,49 @@ const ProfilePage = () => {
                                 {isSaving ? 'Збереження...' : 'Зберегти'}
                             </button>
                             <button className="btn-cancel" onClick={() => setShowNameModal(false)}>
+                                Скасувати
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Модалка зміни пароля */}
+            {showPasswordModal && (
+                <div className="modal-overlay">
+                    <div className="modal-card">
+                        <h3>Зміна пароля</h3>
+                        <input
+                            type="password"
+                            className="form-input mb-2"
+                            value={oldPassword}
+                            onChange={(e) => setOldPassword(e.target.value)}
+                            placeholder="Старий пароль"
+                        />
+                        <input
+                            type="password"
+                            className="form-input mb-2"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            placeholder="Новий пароль"
+                        />
+                        <input
+                            type="password"
+                            className="form-input mb-3"
+                            value={confirmNewPassword}
+                            onChange={(e) => setConfirmNewPassword(e.target.value)}
+                            placeholder="Підтвердіть новий пароль"
+                        />
+                        <div className="modal-actions">
+                            <button className="btn-save" onClick={handleUpdatePassword} disabled={isChangingPwd}>
+                                {isChangingPwd ? 'Оновлення...' : 'Оновити пароль'}
+                            </button>
+                            <button className="btn-cancel" onClick={() => {
+                                setShowPasswordModal(false);
+                                setOldPassword('');
+                                setNewPassword('');
+                                setConfirmNewPassword('');
+                            }}>
                                 Скасувати
                             </button>
                         </div>
