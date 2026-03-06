@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Table, Spinner, Modal, Button, Form } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import api from '../api/axiosConfig';
 import type { User } from '../types';
 import './AdminUsersPage.css';
@@ -49,11 +50,12 @@ const AdminUsersPage = () => {
     const handleSave = async () => {
         try {
             await api.put(`/users/${editId}`, formData);
+            toast.success("Дані користувача успішно оновлено! ");
             fetchUsers();
             handleClose();
         } catch (err) {
             console.error(err);
-            alert("Помилка оновлення");
+            toast.error("Помилка оновлення даних ");
         }
     };
 

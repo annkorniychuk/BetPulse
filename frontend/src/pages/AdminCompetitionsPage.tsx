@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Table, Button, Form, Row, Col } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import api from '../api/axiosConfig';
 import './AdminCompetitionsPage.css';
 
@@ -12,7 +13,6 @@ interface Competition {
     id: number;
     name: string;
     sportId: number;
-    sport?: Sport;
     country: string;
 }
 
@@ -26,6 +26,10 @@ const AdminCompetitionsPage = () => {
     });
 
     const [editId, setEditId] = useState<number | null>(null);
+
+    // Стани для модалки видалення
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<number | null>(null);
 
     const fetchCompetitions = () => {
         api.get<Competition[]>('/competitions')
@@ -57,28 +61,39 @@ const AdminCompetitionsPage = () => {
 
             if (editId) {
                 await api.put(`/competitions/${editId}`, data);
+                toast.success("Змагання успішно оновлено! ✏");
                 setEditId(null);
             } else {
                 await api.post('/competitions', data);
+                toast.success("Змагання успішно створено! ");
             }
 
             setFormData({ name: '', sportId: '' });
             fetchCompetitions();
         } catch (e) {
             console.error(e);
-            alert("Помилка збереження змагання");
+            toast.error("Помилка збереження змагання ");
         }
     };
 
-    const handleDelete = async (id: number) => {
-        if (window.confirm('Видалити це змагання?')) {
-            try {
-                await api.delete(`/competitions/${id}`);
-                fetchCompetitions();
-            } catch (e) {
-                console.error(e);
-                alert("Помилка видалення");
-            }
+    const handleDeleteClick = (id: number) => {
+        setItemToDelete(id);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        if (itemToDelete === null) return;
+
+        try {
+            await api.delete(`/competitions/${itemToDelete}`);
+            toast.success("Змагання успішно видалено! ️");
+            fetchCompetitions();
+        } catch (e) {
+            console.error(e);
+            toast.error("Помилка видалення ");
+        } finally {
+            setShowDeleteModal(false);
+            setItemToDelete(null);
         }
     };
 
@@ -88,6 +103,12 @@ const AdminCompetitionsPage = () => {
             name: comp.name,
             sportId: comp.sportId.toString()
         });
+    };
+
+    // Допоміжна функція: шукаємо назву спорту по ID
+    const getSportName = (sportId: number) => {
+        const sport = sports.find(s => s.id === sportId);
+        return sport ? sport.name : `ID: ${sportId}`;
     };
 
     return (
@@ -172,7 +193,8 @@ const AdminCompetitionsPage = () => {
                                     <tr key={c.id}>
                                         <td className="comp-id">#{c.id}</td>
                                         <td className="comp-name">{c.name}</td>
-                                        <td className="comp-sport">{c.sport?.name || `ID: ${c.sportId}`}</td>
+                                        {/* 👇 ТУТ ВИВОДИМО НАЗВУ ЗАМІСТЬ ID */}
+                                        <td className="comp-sport">{getSportName(c.sportId)}</td>
                                         <td>{c.country}</td>
                                         <td className="text-end pe-3">
                                             <button
@@ -184,7 +206,7 @@ const AdminCompetitionsPage = () => {
                                             </button>
                                             <button
                                                 className="action-btn delete"
-                                                onClick={() => handleDelete(c.id)}
+                                                onClick={() => handleDeleteClick(c.id)}
                                                 title="Видалити"
                                             >
                                                 🗑️
@@ -198,6 +220,30 @@ const AdminCompetitionsPage = () => {
                     </div>
                 </Col>
             </Row>
+
+            {/* --- КАСТОМНА МОДАЛКА ВИДАЛЕННЯ --- */}
+            {showDeleteModal && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999, backdropFilter: 'blur(5px)' }}>
+                    <div style={{ backgroundColor: '#171717', padding: '40px', borderRadius: '16px', border: '1px solid #222', textAlign: 'center', maxWidth: '400px', width: '90%', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+                        <h3 style={{ color: '#fee000', marginBottom: '15px', fontSize: '24px', fontWeight: 'bold', margin: '0 0 15px 0' }}>Підтвердження</h3>
+                        <p style={{ color: '#aeb5bc', fontSize: '18px', marginBottom: '30px', margin: '0 0 30px 0' }}>Ви дійсно хочете видалити це змагання? Цю дію неможливо скасувати.</p>
+                        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
+                            <button
+                                onClick={() => { setShowDeleteModal(false); setItemToDelete(null); }}
+                                style={{ flex: 1, padding: '14px', backgroundColor: 'transparent', border: '1px solid #3a414b', color: '#aeb5bc', borderRadius: '10px', cursor: 'pointer', fontSize: '16px', fontWeight: 600 }}
+                            >
+                                Скасувати
+                            </button>
+                            <button
+                                onClick={confirmDelete}
+                                style={{ flex: 1, padding: '14px', backgroundColor: '#dc3545', border: 'none', color: '#fff', borderRadius: '10px', cursor: 'pointer', fontSize: '16px', fontWeight: 600 }}
+                            >
+                                Видалити
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

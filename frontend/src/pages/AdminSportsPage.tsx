@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Table, Button, Row, Col, Modal, Form } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import api from '../api/axiosConfig';
 
 interface Competition {
@@ -20,7 +21,10 @@ const AdminSportsPage = () => {
     const [editMode, setEditMode] = useState(false);
     const [formData, setFormData] = useState({ id: 0, name: '' });
 
-    // 1. Прибрали useCallback. Просто звичайна функція.
+    // Стани для кастомної модалки видалення
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<number | null>(null);
+
     const fetchSports = async () => {
         try {
             const res = await api.get<Sport[]>('/sports');
@@ -30,38 +34,48 @@ const AdminSportsPage = () => {
         }
     };
 
-    // 2. Викликаємо її при завантаженні сторінки.
     useEffect(() => {
         fetchSports();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    // 👆 Цей коментар вище ВИМИКАЄ помилку для цього рядка.
 
     const handleSubmit = async () => {
         try {
             if (editMode) {
                 await api.put(`/sports/${formData.id}`, { name: formData.name });
+                toast.success("Категорію успішно оновлено! ️");
             } else {
                 await api.post('/sports', { name: formData.name });
+                toast.success("Нову категорію створено! ");
             }
-            // Оновлюємо список після збереження
             await fetchSports();
             setShowModal(false);
         } catch (e) {
             console.error("Помилка збереження:", e);
-            alert('Помилка збереження');
+            toast.error("Помилка збереження ");
         }
     };
 
-    const handleDelete = async (id: number) => {
-        if (window.confirm('Видалити?')) {
-            try {
-                await api.delete(`/sports/${id}`);
-                await fetchSports();
-            } catch (e) {
-                console.error("Помилка видалення:", e);
-                alert('Помилка видалення');
-            }
+    // Відкриваємо модалку видалення
+    const handleDeleteClick = (id: number) => {
+        setItemToDelete(id);
+        setShowDeleteModal(true);
+    };
+
+    // Фактичне видалення після підтвердження
+    const confirmDelete = async () => {
+        if (itemToDelete === null) return;
+
+        try {
+            await api.delete(`/sports/${itemToDelete}`);
+            toast.success("Категорію успішно видалено! ");
+            await fetchSports();
+        } catch (e) {
+            console.error("Помилка видалення:", e);
+            toast.error("Помилка видалення ");
+        } finally {
+            setShowDeleteModal(false);
+            setItemToDelete(null);
         }
     };
 
@@ -79,7 +93,7 @@ const AdminSportsPage = () => {
     return (
         <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 style={{fontWeight: 600}}> Керування Спортом</h2>
+                <h2 style={{fontWeight: 600}}>Керування Спортом</h2>
                 <Button className="btn-warning-pulse" onClick={() => openModal()}>
                     + Додати Категорію
                 </Button>
@@ -93,7 +107,7 @@ const AdminSportsPage = () => {
                                 <span style={{fontSize: '18px'}}>{sport.name}</span>
                                 <div>
                                     <Button size="sm" variant="link" style={{textDecoration: 'none', color: '#fee000'}} onClick={() => openModal(sport)}>✏️</Button>
-                                    <Button size="sm" variant="link" style={{textDecoration: 'none', color: '#dc3545'}} onClick={() => handleDelete(sport.id)}>🗑️</Button>
+                                    <Button size="sm" variant="link" style={{textDecoration: 'none', color: '#dc3545'}} onClick={() => handleDeleteClick(sport.id)}>🗑️</Button>
                                 </div>
                             </div>
                             <div className="card-body">
@@ -122,6 +136,7 @@ const AdminSportsPage = () => {
                 ))}
             </Row>
 
+            {/* Модалка для додавання/редагування */}
             <Modal show={showModal} onHide={() => setShowModal(false)} centered>
                 <div style={{backgroundColor: '#141414', border: '1px solid #373737', color: '#fff'}}>
                     <Modal.Header closeButton closeVariant="white" style={{borderBottom: '1px solid #373737'}}>
@@ -146,6 +161,30 @@ const AdminSportsPage = () => {
                     </Modal.Footer>
                 </div>
             </Modal>
+
+            {/* --- КАСТОМНА МОДАЛКА ВИДАЛЕННЯ --- */}
+            {showDeleteModal && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999, backdropFilter: 'blur(5px)' }}>
+                    <div style={{ backgroundColor: '#171717', padding: '40px', borderRadius: '16px', border: '1px solid #222', textAlign: 'center', maxWidth: '400px', width: '90%', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+                        <h3 style={{ color: '#fee000', marginBottom: '15px', fontSize: '24px', fontWeight: 'bold', margin: '0 0 15px 0' }}>Підтвердження</h3>
+                        <p style={{ color: '#aeb5bc', fontSize: '18px', marginBottom: '30px', margin: '0 0 30px 0' }}>Ви дійсно хочете видалити цю категорію спорту? Цю дію неможливо скасувати.</p>
+                        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
+                            <button
+                                onClick={() => { setShowDeleteModal(false); setItemToDelete(null); }}
+                                style={{ flex: 1, padding: '14px', backgroundColor: 'transparent', border: '1px solid #3a414b', color: '#aeb5bc', borderRadius: '10px', cursor: 'pointer', fontSize: '16px', fontWeight: 600 }}
+                            >
+                                Скасувати
+                            </button>
+                            <button
+                                onClick={confirmDelete}
+                                style={{ flex: 1, padding: '14px', backgroundColor: '#dc3545', border: 'none', color: '#fff', borderRadius: '10px', cursor: 'pointer', fontSize: '16px', fontWeight: 600 }}
+                            >
+                                Видалити
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
