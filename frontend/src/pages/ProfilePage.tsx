@@ -142,7 +142,6 @@ const ProfilePage = () => {
 
     return (
         <div className="profile-layout">
-            {/* НОВА ОБГОРТКА */}
             <div className="profile-inner-wrapper">
                 <div className="profile-sidebar">
                     <div className="sidebar-user-info">
@@ -157,6 +156,10 @@ const ProfilePage = () => {
                         </button>
                         <button className="btn-nav" onClick={() => navigate('/bets-history')}>
                             Історія ставок
+                        </button>
+                        {/* ДОДАНО КНОПКУ "УЛЮБЛЕНІ" */}
+                        <button className="btn-nav" onClick={() => navigate('/favorites')}>
+                            Улюблені
                         </button>
                         <button className="btn-nav" onClick={() => navigate('/')}>
                             На головну
@@ -224,7 +227,6 @@ const ProfilePage = () => {
                     </div>
                 </div>
             </div>
-            {/* КІНЕЦЬ НОВОЇ ОБГОРТКИ */}
 
             {showNameModal && (
                 <div className="modal-overlay">

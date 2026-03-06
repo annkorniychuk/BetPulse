@@ -137,6 +137,40 @@ public class UsersController : ControllerBase
         return Ok("Додано в улюблене");
     }
 
+    // Отримати список улюблених змагань
+    [HttpGet("favorites")]
+    public async Task<IActionResult> GetFavorites()
+    {
+        var userId = GetCurrentUserId();
+        var favorites = await _context.Favorites
+            .Include(f => f.Competition) // Підтягуємо дані про змагання
+            .Where(f => f.UserId == userId)
+            .Select(f => new
+            {
+                Id = f.Id,
+                CompetitionId = f.CompetitionId,
+                CompetitionName = f.Competition!.Name,
+                Country = f.Competition.Country
+            })
+            .ToListAsync();
+
+        return Ok(favorites);
+    }
+
+    // Видалити з улюблених
+    [HttpDelete("favorites/{id}")]
+    public async Task<IActionResult> RemoveFavorite(int id)
+    {
+        var userId = GetCurrentUserId();
+        var favorite = await _context.Favorites.FirstOrDefaultAsync(f => f.Id == id && f.UserId == userId);
+
+        if (favorite == null) return NotFound("Не знайдено в улюблених");
+
+        _context.Favorites.Remove(favorite);
+        await _context.SaveChangesAsync();
+        return Ok("Видалено з улюблених");
+    }
+
     // Мої ставки 
     [HttpGet("bets")]
     public async Task<ActionResult<List<Bet>>> GetMyBets()

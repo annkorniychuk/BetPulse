@@ -27,6 +27,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import BetsHistoryPage from './pages/BetsHistoryPage.tsx'
 import GamePlaceholderPage from "./pages/GamePlaceholderPage";
 import BoxOfRaPage from "./pages/BoxOfRaPage";
+import FavoritesPage from './pages/FavoritesPage';
 
 function App() {
     const [isLoading, setIsLoading] = useState(true);
@@ -51,6 +52,7 @@ function App() {
                         <Route path="/bets-history" element={<BetsHistoryPage />} />
                         <Route path="/games/:slug" element={<GamePlaceholderPage />} />
                         <Route path="/games/box-of-ra" element={<BoxOfRaPage />} />
+                        <Route path="/favorites" element={<FavoritesPage />} />
                     </Route>
 
                     <Route path="/admin" element={<AdminLayout />}>
