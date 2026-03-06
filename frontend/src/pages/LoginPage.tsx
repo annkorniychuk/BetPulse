@@ -1,7 +1,8 @@
-import { useState, type FC, type FormEvent } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import api from '../api/axiosConfig';
 import './LoginPage.css';
 
@@ -14,7 +15,7 @@ interface LoginResponse {
 
 type ForgotPasswordStep = 'none' | 'email' | 'sent';
 
-const LoginPage: FC = () => {
+const LoginPage: React.FC = () => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({ email: '', password: '' });
@@ -29,7 +30,8 @@ const LoginPage: FC = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e: FormEvent) => {
+    // Виправили FormEvent на правильний React.FormEvent
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             const response = await api.post<LoginResponse>('/auth/login', {
@@ -42,9 +44,10 @@ const LoginPage: FC = () => {
             localStorage.setItem('userRole', role);
             localStorage.setItem('userEmail', email);
 
-            toast.success("Вхід успішний! Вітаємо 👋");
+            toast.success("Вхід успішний! Вітаємо ");
             navigate('/');
         } catch (error) {
+            console.error(error); // Виправили 'error is defined but never used'
             const err = error as AxiosError;
             let errorMessage = "Невірний логін або пароль";
             if (err.response?.data) {
@@ -54,32 +57,47 @@ const LoginPage: FC = () => {
         }
     };
 
-    // Відправка запиту на бекенд для скидання паролю
+    // Виправили any на конкретний тип
+    const handleGoogleAuth = async (credentialResponse: { credential?: string }) => {
+        try {
+            const response = await api.post<LoginResponse>('/auth/google-login', {
+                credential: credentialResponse.credential
+            });
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('userRole', response.data.role);
+            localStorage.setItem('userEmail', response.data.email);
+            toast.success("Вхід через Google успішний! ");
+            navigate('/');
+        } catch (error) {
+            console.error(error); // Виправили 'error is defined but never used'
+            toast.error("Помилка авторизації через Google");
+        }
+    };
+
     const handleSendCode = async () => {
         if (!forgotEmail) {
-            toast.warning("Введіть email 📧");
+            toast.warning("Введіть email ");
             return;
         }
         setIsProcessing(true);
         try {
             await api.post('/auth/forgot-password', { email: forgotEmail });
-            toast.success("Код надіслано! Перевірте пошту ✉️");
+            toast.success("Код надіслано! Перевірте пошту ");
             setForgotStep('sent');
-        } catch {
-            toast.error("Помилка відправки. Перевірте email. ❌");
+        } catch (error) {
+            console.error(error); // Виправили 'error is defined but never used'
+            toast.error("Помилка відправки. Перевірте email. ");
         } finally {
             setIsProcessing(false);
         }
     };
 
-    // Відкриваємо поштовик залежно від введеного домену
     const handleOpenEmail = () => {
         if (forgotEmail.includes('@gmail.com')) {
             window.open('https://mail.google.com', '_blank');
         } else if (forgotEmail.includes('@ukr.net')) {
             window.open('https://mail.ukr.net', '_blank');
         } else {
-            // Дефолтний перехід, якщо домен невідомий
             window.open('https://mail.google.com', '_blank');
         }
     };
@@ -95,71 +113,81 @@ const LoginPage: FC = () => {
     );
 
     return (
-        <div className="login-page">
-            {forgotStep === 'none' ? (
-                <div className="login-card">
-                    <div className="card-top-row">
-                        <div className="bp-logo-small">BP</div>
-                        <div className="close-icon" onClick={() => navigate('/')}>✕</div>
-                    </div>
+        <GoogleOAuthProvider clientId="29588120359-ppkbibh856jnf6t5qh5gr4iu7tlu21jq.apps.googleusercontent.com">
+            <div className="login-page">
+                {forgotStep === 'none' ? (
+                    <div className="login-card">
+                        <div className="card-top-row">
+                            <div className="bp-logo-small">BP</div>
+                            <div className="close-icon" onClick={() => navigate('/')}>✕</div>
+                        </div>
 
-                    <h2 className="login-title">Увійдіть у аккаунт</h2>
+                        <h2 className="login-title">Увійдіть у аккаунт</h2>
 
-                    <form onSubmit={handleSubmit} className="login-form-full">
-                        <div className="input-group">
-                            <div className="input-wrapper">
-                                <input type="email" name="email" placeholder="Емейл адреса" className="custom-input" value={formData.email} onChange={handleChange} required />
+                        <form onSubmit={handleSubmit} className="login-form-full">
+                            <div className="input-group">
+                                <div className="input-wrapper">
+                                    <input type="email" name="email" placeholder="Емейл адреса" className="custom-input" value={formData.email} onChange={handleChange} required />
+                                </div>
+                                <div className="input-wrapper">
+                                    <input type={showPassword ? "text" : "password"} name="password" placeholder="Пароль" className="custom-input" value={formData.password} onChange={handleChange} required />
+                                    <EyeIcon show={showPassword} toggle={() => setShowPassword(!showPassword)} />
+                                </div>
                             </div>
-                            <div className="input-wrapper">
-                                <input type={showPassword ? "text" : "password"} name="password" placeholder="Пароль" className="custom-input" value={formData.password} onChange={handleChange} required />
-                                <EyeIcon show={showPassword} toggle={() => setShowPassword(!showPassword)} />
+
+                            <div className="forgot-pass-link" onClick={() => setForgotStep('email')}>
+                                Забули пароль?
                             </div>
+
+                            <button type="submit" className="btn-login">Увійти</button>
+                        </form>
+
+                        <div className="register-link" onClick={() => navigate('/register')}>
+                            Не маєте аккаунт? <span>Зареєструйтеся зараз!</span>
                         </div>
 
-                        <div className="forgot-pass-link" onClick={() => setForgotStep('email')}>
-                            Забули пароль?
+                        <div style={{ marginTop: '25px', width: '100%', display: 'flex', justifyContent: 'center' }}>
+                            <GoogleLogin
+                                onSuccess={handleGoogleAuth}
+                                theme="filled_black"
+                                shape="pill"
+                                width="100%"
+                            />
                         </div>
-
-                        <button type="submit" className="btn-login">Увійти</button>
-                    </form>
-
-                    <div className="register-link" onClick={() => navigate('/register')}>
-                        Не маєте аккаунт? <span>Зареєструйтеся зараз!</span>
                     </div>
-                </div>
-            ) : (
-                <div className="login-card">
-                    <div className="card-top-row">
-                        <div className="bp-logo-small">
-                            <span className="logo-white">B</span>
-                            <span className="logo-yellow">P</span>
+                ) : (
+                    <div className="login-card">
+                        <div className="card-top-row">
+                            <div className="bp-logo-small">
+                                <span className="logo-white">B</span>
+                                <span className="logo-yellow">P</span>
+                            </div>
+                            <div className="close-icon" onClick={() => setForgotStep('none')}>✕</div>
                         </div>
-                        <div className="close-icon" onClick={() => setForgotStep('none')}>✕</div>
+
+                        {forgotStep === 'email' && (
+                            <div className="modal-body">
+                                <h3 className="modal-title">Забули пароль</h3>
+                                <p className="modal-subtitle">Будь ласка, вкажіть свою адресу електронної пошти, щоб ми могли скинути ваш пароль</p>
+                                <input type="email" className="custom-input modal-input" placeholder="Email" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} />
+                                <button className="btn-login" onClick={handleSendCode} disabled={isProcessing}>
+                                    {isProcessing ? 'Відправка...' : 'Далі'}
+                                </button>
+                            </div>
+                        )}
+
+                        {forgotStep === 'sent' && (
+                            <div className="modal-body">
+                                <h3 className="modal-title">Код надіслано</h3>
+                                <p className="modal-subtitle">Ми надіслали вам лист. Перейдіть за посиланням у ньому, щоб оновити пароль.</p>
+                                <button className="btn-login" onClick={handleOpenEmail}>Перейти до пошти</button>
+                                <div className="modal-text-link" onClick={() => setForgotStep('email')}>Помилилися поштою?</div>
+                            </div>
+                        )}
                     </div>
-
-                    {forgotStep === 'email' && (
-                        <div className="modal-body">
-                            <h3 className="modal-title">Забули пароль</h3>
-                            <p className="modal-subtitle">Будь ласка, вкажіть свою адресу електронної пошти, щоб ми могли скинути ваш пароль</p>
-                            <input type="email" className="custom-input modal-input" placeholder="Email" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} />
-                            <button className="btn-login" onClick={handleSendCode} disabled={isProcessing}>
-                                {isProcessing ? 'Відправка...' : 'Далі'}
-                            </button>
-                        </div>
-                    )}
-
-                    {forgotStep === 'sent' && (
-                        <div className="modal-body">
-                            <h3 className="modal-title">Код надіслано</h3>
-                            <p className="modal-subtitle">Ми надіслали вам лист. Перейдіть за посиланням у ньому, щоб оновити пароль.</p>
-                            {/* ТЕПЕР ЦЯ КНОПКА ВІДКРИВАЄ РЕАЛЬНУ ПОШТУ */}
-                            <button className="btn-login" onClick={handleOpenEmail}>Перейти до пошти</button>
-                            <div className="modal-text-link" onClick={() => setForgotStep('email')}>Помилилися поштою?</div>
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+        </GoogleOAuthProvider>
     );
 };
 
