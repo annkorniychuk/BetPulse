@@ -26,20 +26,20 @@ const BetsHistoryPage: FC = () => {
 
                 if (Array.isArray(response.data)) {
                     const sortedBets = response.data.sort((a, b) =>
-                        new Date(a.betDate).getTime() - new Date(b.betDate).getTime()
+                        new Date(b.betDate).getTime() - new Date(a.betDate).getTime()
                     );
                     setBets(sortedBets);
                 } else {
                     setBets([]);
                 }
             } catch (error) {
-                console.error('Помилка завантаження ставок:', error);
+                console.error(error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchBets();
+        void fetchBets();
     }, []);
 
     return (
@@ -73,7 +73,7 @@ const BetsHistoryPage: FC = () => {
                             <tbody>
                             {bets.map((b, index) => (
                                 <tr key={b.id}>
-                                    <td className="history-td-id">{index + 1}</td>
+                                    <td className="history-td-id">{bets.length - index}</td>
                                     <td className="history-td-date">
                                         {b.betDate ? new Date(b.betDate).toLocaleString("uk-UA") : '—'}
                                     </td>
