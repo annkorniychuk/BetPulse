@@ -133,7 +133,7 @@ const BoxOfRaPage = () => {
             <div className="boxra-card">
                 <div className="boxra-top">
                     <div>
-                        <h1 className="boxra-title">BOX OF RA</h1>
+                        <h1 className="boxra-title">КРУТИ БАРАБАН</h1>
                         <p className="boxra-subtitle">Слот у стилі стародавніх скарбів</p>
                     </div>
 

@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // Pages
 import AboutPage from "./pages/AboutPage";
+import BlackjackPage from "./pages/BlackjackPage";
 import HomePage from './pages/HomePage';
 import AdminLayout from './layouts/AdminLayout';
 import AdminUsersPage from './pages/AdminUsersPage';
@@ -55,6 +56,7 @@ function App() {
                         <Route path="/games/box-of-ra" element={<BoxOfRaPage />} />
                         <Route path="/about" element={<AboutPage />} />
                         <Route path="/favorites" element={<FavoritesPage />} />
+                        <Route path="/games/blackjack" element={<BlackjackPage />} />
                     </Route>
 
                     <Route path="/admin" element={<AdminLayout />}>
