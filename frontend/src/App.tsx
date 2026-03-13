@@ -28,6 +28,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import BetsHistoryPage from './pages/BetsHistoryPage.tsx'
 import GamePlaceholderPage from "./pages/GamePlaceholderPage";
 import BoxOfRaPage from "./pages/BoxOfRaPage";
+import FavoritesPage from './pages/FavoritesPage';
 
 function App() {
     const [isLoading, setIsLoading] = useState(true);

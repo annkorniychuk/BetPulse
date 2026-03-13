@@ -13,7 +13,7 @@ h2 {
 }
 
 .card-pulse {
-    background-color: #1e2329;
+    background-color: #222222;
     border: 1px solid #2f353f;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -39,8 +39,8 @@ h2 {
 }
 
 .form-control-pulse, .form-select {
-    background-color: #2b313a !important;
-    border: 1px solid #3a414b !important;
+    background-color: #424242 !important;
+    border: 1px solid #515151 !important;
     color: #ffffff !important;
     border-radius: 6px;
     padding: 10px 15px;
@@ -51,6 +51,7 @@ h2 {
     border-color: #ffb700 !important;
     box-shadow: 0 0 0 0.2rem rgba(255, 128, 0, 0.25) !important;
     outline: none;
+    color: #ffffff !important;
 }
 
 .form-label {
@@ -83,7 +84,7 @@ h2 {
 }
 
 .btn-secondary-dark {
-    background-color: #3a414b;
+    background-color: #3a3a3a;
     border: none;
     color: #ccc;
 }

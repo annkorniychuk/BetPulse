@@ -44,13 +44,14 @@ html, body, #root {
 
 .btn-custom{
     margin-right: 20px;
-    background: linear-gradient(179.71deg, #fff, #e6e7e8);
+    background-color: #fee000 !important;
     color: #000000 !important;
     font-weight: 600;
     font-size: 14px;
     font-family: 'Poppins', sans-serif;
 }
-.btn-warning{
+
+.btn-warning {
     background-color: #fee000 !important;
     font-weight: 600;
     font-size: 14px;
@@ -95,8 +96,8 @@ html, body, #root {
 
 .header-search-input {
     width: 100%;
-    background-color: #212529;
-    border: 1px solid #3a414b;
+    background-color: #292929;
+    border: 1px solid #494949;
     color: #fff;
     border-radius: 6px;
     padding: 10px 15px 10px 45px;
