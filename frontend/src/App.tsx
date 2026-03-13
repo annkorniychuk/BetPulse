@@ -54,6 +54,7 @@ function App() {
                         <Route path="/games/:slug" element={<GamePlaceholderPage />} />
                         <Route path="/games/box-of-ra" element={<BoxOfRaPage />} />
                         <Route path="/about" element={<AboutPage />} />
+                        <Route path="/favorites" element={<FavoritesPage />} />
                     </Route>
 
                     <Route path="/admin" element={<AdminLayout />}>

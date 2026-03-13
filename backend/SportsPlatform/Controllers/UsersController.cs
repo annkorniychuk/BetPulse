@@ -232,6 +232,34 @@ public class UsersController : ControllerBase
         await _context.SaveChangesAsync();
         return Ok(new { message = "Заявка на виведення успішно оброблена!", newBalance = user.Balance });
     }
+
+    [HttpPost("slot-bet")]
+    public async Task<IActionResult> SlotBet([FromBody] CashierRequest request)
+    {
+        var userId = GetCurrentUserId();
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return NotFound();
+
+        if (user.Balance < request.Amount) return BadRequest("Недостатньо коштів на балансі");
+
+        user.Balance -= request.Amount;
+        await _context.SaveChangesAsync();
+        return Ok(new { newBalance = user.Balance });
+    }
+
+    [HttpPost("slot-win")]
+    public async Task<IActionResult> SlotWin([FromBody] CashierRequest request)
+    {
+        if (request.Amount <= 0) return BadRequest("Сума виграшу має бути більшою за 0");
+
+        var userId = GetCurrentUserId();
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return NotFound();
+
+        user.Balance += request.Amount;
+        await _context.SaveChangesAsync();
+        return Ok(new { newBalance = user.Balance });
+    }
 }
 
 public class UpdateUserRequest

@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import api from "../api/axiosConfig";
 import "./Slot1.css";
 
 import imm1 from "../assets/icons/imm1.png";
@@ -35,14 +36,28 @@ const BoxOfRaPage = () => {
         getRandomSymbol(),
     ]);
 
-    const [balance, setBalance] = useState(1000);
+    const [balance, setBalance] = useState(0);
+    const [isBalanceLoaded, setIsBalanceLoaded] = useState(false);
     const [bet, setBet] = useState(50);
     const [message, setMessage] = useState("Натисни «Крутити», щоб почати");
     const [isSpinning, setIsSpinning] = useState(false);
 
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const res = await api.get('/profile');
+                setBalance(res.data.balance);
+                setIsBalanceLoaded(true);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        void fetchProfile();
+    }, []);
+
     const canSpin = useMemo(() => {
-        return !isSpinning && bet > 0 && balance >= bet;
-    }, [isSpinning, bet, balance]);
+        return !isSpinning && isBalanceLoaded && bet > 0 && balance >= bet;
+    }, [isSpinning, isBalanceLoaded, bet, balance]);
 
     const resolveWin = (nextReels: SymbolItem[]) => {
         const [a, b, c] = nextReels;
@@ -60,22 +75,28 @@ const BoxOfRaPage = () => {
         return 0;
     };
 
-    const handleSpin = () => {
+    const handleSpin = async () => {
         if (!canSpin) {
             setMessage("Недостатньо коштів або слот уже крутиться");
+            return;
+        }
+
+        try {
+            const betRes = await api.post('/profile/slot-bet', { amount: bet });
+            setBalance(betRes.data.newBalance);
+        } catch {
+            setMessage("Помилка при знятті ставки");
             return;
         }
 
         setIsSpinning(true);
         setMessage("Барабани крутяться...");
 
-        setBalance((prev) => prev - bet);
-
         const spinInterval = setInterval(() => {
             setReels([getRandomSymbol(), getRandomSymbol(), getRandomSymbol()]);
         }, 100);
 
-        setTimeout(() => {
+        setTimeout(async () => {
             clearInterval(spinInterval);
 
             const finalReels = [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()];
@@ -84,8 +105,13 @@ const BoxOfRaPage = () => {
             const win = resolveWin(finalReels);
 
             if (win > 0) {
-                setBalance((prev) => prev + win);
-                setMessage(`Виграш: +${win}`);
+                try {
+                    const winRes = await api.post('/profile/slot-win', { amount: win });
+                    setBalance(winRes.data.newBalance);
+                    setMessage(`Виграш: +${win}`);
+                } catch {
+                    setMessage(`Виграш: +${win} (Помилка зарахування)`);
+                }
             } else {
                 setMessage("Без виграшу. Спробуй ще");
             }
@@ -112,7 +138,7 @@ const BoxOfRaPage = () => {
                     </div>
 
                     <div className="boxra-balance">
-                        Баланс: <span>{balance}</span>
+                        Баланс: <span>{isBalanceLoaded ? balance : "..."}</span>
                     </div>
                 </div>
 
