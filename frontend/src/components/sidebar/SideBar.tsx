@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../api/axiosConfig';
 import './SideBar.css';
 
-// Імпорт іконок
 import menuIcon from '../../assets/icons/Vector-9.svg';
 import homeIcon from '../../assets/icons/Vector-8.svg';
 import basketballIcon from '../../assets/icons/Vector-6.svg';
@@ -17,7 +16,6 @@ import liveCasinoIcon from '../../assets/icons/Vector-7.svg';
 import arrowIcon from '../../assets/icons/arrow.svg';
 import defaultIcon from '../../assets/icons/Vector.svg';
 
-// Типи даних
 interface CompetitionDto {
     id: number;
     name: string;
@@ -46,7 +44,7 @@ interface MenuItem {
     subMenu?: SubMenuItem[];
     path?: string;
     isSport?: boolean;
-    sportId?: number; // 👈 ДОДАЛИ: Тепер головна категорія теж знає свій ID
+    sportId?: number;
 }
 
 const Sidebar: FunctionComponent = () => {
@@ -65,16 +63,31 @@ const Sidebar: FunctionComponent = () => {
 
     useEffect(() => {
         const fetchMenu = async () => {
-            try {
-                const staticTop: MenuItem[] = [
-                    { icon: menuIcon, label: 'Меню', icon2: arrowIcon },
-                    { icon: homeIcon, label: 'Головна сторінка', path: '/' },
-                ];
+            const staticTop: MenuItem[] = [
+                { icon: menuIcon, label: 'Меню', icon2: arrowIcon },
+                { icon: homeIcon, label: 'Головна сторінка', path: '/' },
+            ];
 
+            const staticBottom: MenuItem[] = [
+                { icon: catalogIcon, label: 'Спортивні події', path: '/catalog' },
+                { icon: cardsIcon, label: 'Карти' },
+                {
+                    icon: liveCasinoIcon,
+                    label: 'Лайв-казино',
+                    icon2: arrowIcon,
+                    subMenu: [
+                        { label: 'Рулетка' },
+                        { label: 'Блекджек' },
+                    ]
+                },
+            ];
+
+            try {
                 const response = await api.get<SportDto[]>('/sports');
 
-                // Відфільтровуємо баговий спорт "змагання"
-                const validSports = response.data.filter(sport => sport.name.toLowerCase() !== 'змагання');
+                const validSports = response.data.filter(
+                    sport => sport.name.toLowerCase() !== 'змагання'
+                );
 
                 const dynamicSports: MenuItem[] = validSports.map((sport: SportDto) => {
                     const countryCounts: { [key: string]: number } = {};
@@ -99,29 +112,16 @@ const Sidebar: FunctionComponent = () => {
                         label: sport.name,
                         icon2: arrowIcon,
                         isSport: true,
-                        subMenu: subMenu,
-                        sportId: sport.id // 👈 Прив'язали ID до самої кнопки спорту
+                        subMenu,
+                        sportId: sport.id
                     };
                 });
 
-                const staticBottom: MenuItem[] = [
-                    { icon: catalogIcon, label: 'Спортивні події', path: '/catalog' }, // 👈 Додали перехід і на каталог
-                    { icon: cardsIcon, label: 'Карти' },
-                    {
-                        icon: liveCasinoIcon,
-                        label: 'Лайв-казино',
-                        icon2: arrowIcon,
-                        subMenu: [
-                            { label: 'Рулетка' },
-                            { label: 'Блекджек' },
-                        ]
-                    },
-                ];
-
                 setMenuItems([...staticTop, ...dynamicSports, ...staticBottom]);
-
             } catch (error) {
                 console.error("Помилка завантаження меню:", error);
+
+                setMenuItems([...staticTop, ...staticBottom]);
             }
         };
 
@@ -132,7 +132,6 @@ const Sidebar: FunctionComponent = () => {
         if (item.path) {
             navigate(item.path);
         } else if (item.isSport && item.sportId) {
-            // 👈 ДОДАЛИ: Якщо це спорт, робимо перехід на каталог з фільтром цього спорту
             navigate(`/catalog?sportId=${item.sportId}`);
         }
     };
@@ -175,7 +174,6 @@ const Sidebar: FunctionComponent = () => {
                                         onClick={() => handleSubItemClick(sub)}
                                     >
                                         <span>{sub.label}</span>
-                                        {/* 👇 ПРИБРАЛИ УМОВУ sub.count > 0, тепер нулі будуть показуватися! */}
                                         {sub.count !== undefined && (
                                             <span className="submenu-count">{sub.count}</span>
                                         )}
